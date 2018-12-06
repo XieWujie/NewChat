@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable name="message" type="com.example.administrator.newchat.data.message.Message"/>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+
+
+        <ImageView
+                android:id="@+id/chat_user_avatar"
+                android:layout_width="40dp"
+                android:background="@drawable/user_default_avator"
+                imageSrc="@{message.avator}"
+                android:layout_height="40dp"/>
+        <TextView android:layout_width="match_parent"
+                  android:layout_marginRight="40dp"
+                  android:layout_marginLeft="5dp"
+                  android:layout_marginTop="10dp"
+                  android:gravity="left"
+                  android:text="@{message.message}"
+                  android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+</layout>

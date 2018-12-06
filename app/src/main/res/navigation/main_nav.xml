@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main_nav" app:startDestination="@id/messageFragment">
+
+    <fragment android:id="@+id/contactFragment" android:name="com.example.administrator.newchat.view.ContactFragment"
+              android:label="ContactFragment">
+    </fragment>
+    <fragment android:id="@+id/messageFragment" android:name="com.example.administrator.newchat.view.MessageFragment"
+              android:label="MessageFragment">
+    </fragment>
+    <fragment android:id="@+id/addContactFragment"
+              android:name="com.example.administrator.newchat.view.AddContactFragment"
+              android:label="fragment_add_contact" >
+        <action android:id="@+id/action_addContactFragment_to_userMessageFragment"
+                app:destination="@id/userMessageFragment"/>
+    </fragment>
+    <fragment android:id="@+id/userMessageFragment"
+              android:name="com.example.administrator.newchat.view.UserMessageFragment"
+              android:label="UserMessageFragment">
+        <action android:id="@+id/action_userMessageFragment_to_contactFragment" app:destination="@id/contactFragment"/>
+    </fragment>
+</navigation>
