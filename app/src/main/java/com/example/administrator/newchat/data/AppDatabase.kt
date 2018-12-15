@@ -13,7 +13,7 @@ import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.data.user.UserDao
 import com.example.administrator.newchat.utilities.DATABASE_NAME
 
-@Database(entities = [User::class,Contact::class,Message::class],version = 1,exportSchema = false)
+@Database(entities = [User::class,Contact::class,Message::class],version = 2,exportSchema = false)
 abstract class AppDatabase:RoomDatabase(){
 
     abstract fun getUserDao(): UserDao

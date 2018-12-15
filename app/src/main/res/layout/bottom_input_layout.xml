@@ -9,49 +9,42 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
-        <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:layout_centerVertical="true"
-                android:background="@drawable/bottom_input_left"
-                android:id="@+id/input_left"/>
-        <FrameLayout
-                android:layout_toRightOf="@+id/input_left"
-                android:layout_centerVertical="true"
-                android:layout_width="match_parent"
-                android:layout_toLeftOf="@+id/input_right"
-                android:id="@+id/input_center"
-                android:layout_height="match_parent">
-            <EditText xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:id="@+id/center_text"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            </EditText>
-        </FrameLayout>
-        <FrameLayout
-                android:layout_gravity="center_vertical"
-                android:layout_width="70dp"
-                android:id="@+id/input_right"
-                android:layout_margin="5dp"
-                android:layout_alignParentRight="true"
-                android:layout_height="match_parent">
-            <androidx.cardview.widget.CardView
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-                    app:cardCornerRadius="2dp"
-                    android:layout_height="match_parent">
+        <EditText xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/center_text"
+                  android:layout_width="match_parent"
+                  android:paddingRight="70dp"
+                  android:paddingTop="5dp"
+                  android:paddingLeft="3dp"
+                  android:paddingBottom="-5dp"
+                  android:background="@null"
+                  android:layout_height="wrap_content"/>
 
-                <TextView android:layout_width="match_parent"
-                          android:text="发 送"
-                          android:gravity="center"
-                          android:id="@+id/input_send_text"
-                          android:textSize="16sp"
-                          android:layout_height="match_parent"/>
-            </androidx.cardview.widget.CardView>
-        </FrameLayout>
+        <TextView android:layout_width="60dp"
+                  android:textColor="@android:color/holo_blue_bright"
+                  android:text="发 送"
+                  android:gravity="bottom"
+                  android:paddingBottom="5dp"
+                  android:layout_alignParentRight="true"
+                  android:id="@+id/input_send_text"
+                  android:textSize="16sp"
+                  android:layout_height="40dp"/>
     </RelativeLayout>
+    <View android:layout_width="match_parent"
+          android:background="#33333333"
+          android:layout_marginLeft="2dp"
+          android:layout_marginRight="2dp"
+          android:layout_height="1dp"/>
+    <LinearLayout android:layout_width="match_parent"
+                  android:orientation="horizontal"
+                  android:gravity="center_vertical"
+                  android:layout_height="40dp">
+        <ImageView android:layout_width="30dp"
+                   android:id="@+id/image"
+                   android:src="@drawable/picture_pic"
+                   android:layout_marginLeft="5dp"
+                   android:layout_height="30dp"/>
+    </LinearLayout>
 </LinearLayout>
 </layout>

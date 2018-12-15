@@ -20,13 +20,14 @@
         <activity
                 android:name=".view.MainActivity"
                 android:launchMode="singleTask">
+        </activity>
+        <activity android:name=".view.LogInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".view.LogInActivity"/>
 
         <service android:name="com.avos.avoscloud.PushService"/>
 

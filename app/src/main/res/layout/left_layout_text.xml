@@ -13,7 +13,7 @@
                 android:id="@+id/chat_user_avatar"
                 android:layout_width="40dp"
                 android:background="@drawable/user_default_avator"
-                imageSrc="@{message.avator}"
+                imageSrc="@{message.avatar}"
                 android:layout_height="40dp"/>
         <TextView android:layout_width="match_parent"
                   android:layout_marginRight="40dp"

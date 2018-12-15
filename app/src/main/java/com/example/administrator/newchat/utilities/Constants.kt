@@ -21,4 +21,8 @@ const val CONTACTS_LIST_ID = "contact_list_id"
 
 const val TEXT_MESSAGE = 1
 
-const val CLIENT_ID = "client_id"
+const val IMAGE_MESSAGE = 2
+
+const val CONVERSATION_ID = "client_id"
+
+const val CONVERSATION__NAME = "client_name"

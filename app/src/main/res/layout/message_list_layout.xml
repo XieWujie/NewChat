@@ -2,11 +2,14 @@
 <layout>
 
 
-<LinearLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+        android:id="@+id/fresh_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
+                                               android:id="@+id/messageRc"
+                                               android:layout_height="match_parent"/>
 
-</LinearLayout>
+</FrameLayout>
 </layout>

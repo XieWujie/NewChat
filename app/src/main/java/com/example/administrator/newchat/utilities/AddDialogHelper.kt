@@ -5,7 +5,6 @@ import android.view.View
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import com.avos.avoscloud.AVObject
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
@@ -16,7 +15,9 @@ class AddDialogHelper(val o:AVObject,val  navController: NavController,val dialo
     @Bindable var markName:String = ""
 
     fun send(view:View){
-        CoreChat.addContact(convertObjectToContact(o))
+        convertObjectToContact(o){
+            CoreChat.addContact(it)
+        }
         navController.navigate(R.id.action_userMessageFragment_to_contactFragment)
         dialog.dismiss()
     }
@@ -25,10 +26,11 @@ class AddDialogHelper(val o:AVObject,val  navController: NavController,val dialo
 
     }
 
-    private fun convertObjectToContact(o:AVObject):Contact{
+    private fun convertObjectToContact(o:AVObject,callback:(contact:Contact)->Unit){
         val name = o.getString(USER_NAME)
         val id = o.objectId
-        val contact = Contact(id,name,markName,CoreChat.userId!!)
-        return contact
+        CoreChat.findConversationId(id,markName){
+            callback(Contact(id,markName,name,it,CoreChat.userId!!))
+        }
     }
 }

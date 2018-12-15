@@ -13,7 +13,7 @@ interface UserDao{
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updata(user: User)
 
-    @Query("SELECT * FROM user LIMIT -1,1")
+    @Query("SELECT * FROM user ORDER BY loginTime DESC LIMIT -1,1")
     fun getLastUser():LiveData<User>
 
     @Query("SELECT * FROM user WHERE id =:id")

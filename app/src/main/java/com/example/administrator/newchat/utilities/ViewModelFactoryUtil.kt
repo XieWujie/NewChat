@@ -5,7 +5,7 @@ import com.example.administrator.newchat.data.AppDatabase
 import com.example.administrator.newchat.data.contacts.ContactRespository
 import com.example.administrator.newchat.data.message.MessageRepository
 import com.example.administrator.newchat.data.user.UserRepository
-import com.example.administrator.newchat.viewmodel.ChatModelFactory
+import com.example.administrator.newchat.viewmodel.MessageModelFactory
 import com.example.administrator.newchat.viewmodel.ContactModelFactory
 import com.example.administrator.newchat.viewmodel.UserModelFactory
 
@@ -19,6 +19,6 @@ object ViewModelFactoryUtil{
 
     private fun getDatabase(context: Context) = AppDatabase.getInstance(context)
 
-    fun getChatModelFactory(context: Context) = ChatModelFactory(MessageRepository.getInstance(getDatabase(context).getMessageDao()))
+    fun getChatModelFactory(context: Context) = MessageModelFactory(MessageRepository.getInstance(getDatabase(context).getMessageDao()))
 
 }

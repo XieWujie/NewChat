@@ -4,13 +4,21 @@ import com.example.administrator.newchat.utilities.runOnNewThread
 
 class MessageRepository private constructor(private val messageDao: MessageDao){
 
-    fun queryById(id:String) = messageDao.queryById(id)
+    fun queryById(id:String,ownerId:String) = messageDao.queryById(id)
 
     fun insert(message: Message){
         runOnNewThread {
             messageDao.insert(message)
         }
     }
+
+    fun insert(messages:List<Message>){
+        runOnNewThread {
+            messageDao.insert(messages)
+        }
+    }
+
+    fun getNewMessage(from:String) = messageDao.getNewMessage()
 
     companion object {
 

@@ -8,11 +8,13 @@ data class Contact(
     @PrimaryKey val id:String,
     val nickName:String,
     val name:String = nickName,
+    val conversationId:String,
     val ownerId:String
 ){
 
     override fun toString(): String {
-        return "$id-$nickName"
+        return "$id-$nickName-$conversationId"
     }
 }
+
 

@@ -1,5 +1,6 @@
 package com.example.administrator.newchat.core
 
+
 import com.example.administrator.newchat.data.message.Message
 
 interface AbstractMessage{
@@ -7,4 +8,9 @@ interface AbstractMessage{
     fun sendMessage(message:Message)
 
     fun cacheMessage(message: Message)
+
+    fun queryMessageByConversationId(id:String)
+
+    fun queryMessageByTime(id:String,timeStamp:Long)
+
 }

@@ -1,94 +1,62 @@
 package com.example.administrator.newchat.core
 
-import android.content.Context
-import com.avos.avoscloud.im.v2.AVIMClient
-import com.avos.avoscloud.im.v2.AVIMConversation
-import com.avos.avoscloud.im.v2.AVIMException
-import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
-import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback
-import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback
+import android.util.Log
+import com.avos.avoscloud.im.v2.*
+import com.avos.avoscloud.im.v2.callback.*
+import com.avos.avoscloud.im.v2.messages.AVIMImageMessage
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage
 import com.example.administrator.newchat.CoreChat
-import com.example.administrator.newchat.data.AppDatabase
 import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.data.message.MessageRepository
+import com.example.administrator.newchat.data.user.User
+import com.example.administrator.newchat.utilities.IMAGE_MESSAGE
 import com.example.administrator.newchat.utilities.TEXT_MESSAGE
-import java.lang.RuntimeException
 
-class MessageManage(context: Context):AbstractMessage{
 
-    private lateinit var messageRepository: MessageRepository
+class MessageManage(
+    private val repository: MessageRepository,
+    private val client: AVIMClient,
+    private val owner:User
+):AbstractMessage{
+
+    private val avimMessageOption = AVIMMessageOption()
     private val conversationMap = HashMap<String,AVIMConversation>()
 
-    private var cilent:AVIMClient? = null
-
     init {
-        messageRepository = MessageRepository.getInstance(AppDatabase.getInstance(context).getMessageDao())
+        avimMessageOption.isReceipt = true
+        fetchNewMessage()
     }
 
-    fun initClient(ownerId:String){
-        val callback = object :AVIMClientCallback(){
-            override fun done(c: AVIMClient?, e: AVIMException?) {
-                if (e == null){
-                    cilent = c!!
-                }else{
-                    e.printStackTrace()
-                }
-            }
 
-        }
-        AVIMClient.getInstance(ownerId).open(callback)
-    }
 
     override fun sendMessage(message: Message) {
-        if (cilent!=null) {
-            getConversation(message) {
-                if (message.type == TEXT_MESSAGE) {
-                    sendTextMessage(it, message)
-                }
-            }
-        }else{
-            val callback = object :AVIMClientCallback(){
-                override fun done(c: AVIMClient?, e: AVIMException?) {
-                    if (e == null){
-                        cilent = c!!
-                        sendMessage(message)
-                    }else{
-                        e.printStackTrace()
-                    }
-                }
-
-            }
-            AVIMClient.getInstance(CoreChat.userId!!).open(callback)
+        getConversation(message.conversationId) {
+           when(message.type){
+               TEXT_MESSAGE ->sendTextMessage(it,message)
+               IMAGE_MESSAGE ->sendImageMessage(it,message)
+           }
         }
     }
 
-    private fun getConversation(message: Message,callback:(conversation:AVIMConversation)->Unit){
-        val id = message.clientId
+    private fun getConversation(id:String,callback:(conversation:AVIMConversation)->Unit){
+
         if (conversationMap.containsKey(id)){
             callback(conversationMap[id]!!)
         }else{
-            checkClient()
-            cilent?.createConversation(listOf(message.clientId),message.from,null,object :AVIMConversationCreatedCallback(){
-                override fun done(p0: AVIMConversation?, p1: AVIMException?) {
-                    if (p1 == null){
-                        callback(p0!!)
-                    }else{
-                        p1.printStackTrace()
-                        throw RuntimeException("get conversation fail")
-                    }
-                }
-            })
+           val conversation =  client.getConversation(id)
+            conversationMap[id] = conversation
+            callback(conversation)
         }
     }
 
     private fun sendTextMessage(conversation: AVIMConversation,message: Message){
         val m = AVIMTextMessage()
         m.text = message.message
-        conversation.sendMessage(m,object :AVIMConversationCallback(){
+        conversation.sendMessage(m,avimMessageOption,object :AVIMConversationCallback(){
             override fun done(e: AVIMException?) {
                 if (e == null){
-                    messageRepository.insert(message)
+                    val new = message.copy(id = m.messageId,createAt = m.timestamp)
+                    repository.insert(new)
                 }else{
                     e.printStackTrace()
                 }
@@ -96,13 +64,103 @@ class MessageManage(context: Context):AbstractMessage{
         })
     }
 
-    override fun cacheMessage(message: Message) {
-        messageRepository.insert(message)
+    private fun sendImageMessage(conversation: AVIMConversation,message: Message){
+        val imageMessage = AVIMImageMessage(message.message)
+        conversation.sendMessage(imageMessage,avimMessageOption,object :AVIMConversationCallback(){
+            override fun done(e: AVIMException?) {
+                if (e == null){
+                    val message = message.copy(id = imageMessage.messageId,createAt = imageMessage.timestamp)
+                    repository.insert(message)
+                }
+            }
+        })
     }
 
-    private fun checkClient(){
-        if (cilent==null){
-            initClient(CoreChat.userId!!)
+    override fun cacheMessage(message: Message) {
+        repository.insert(message)
+    }
+
+
+
+    fun fetchNewMessage(){
+        val query = client.conversationsQuery
+        query.findInBackground(object :AVIMConversationQueryCallback(){
+            override fun done(list: MutableList<AVIMConversation>?, e: AVIMException?) = if (e == null){
+                val messages = ArrayList<Message>()
+                list!!.forEach{
+                    queryMessageByConversationId(it.conversationId)
+                }
+                repository.insert(messages)
+            }else{
+                e.printStackTrace()
+            }
+        })
+    }
+
+
+
+    override fun queryMessageByConversationId(id: String) {
+        getConversation(id){
+            conversation->
+            val unReadCount = conversation.unreadMessagesCount
+            val name = conversation.name
+            val conId = conversation.conversationId
+            conversation.queryMessages(object :AVIMMessagesQueryCallback(){
+
+                override fun done(list: MutableList<AVIMMessage>?, e: AVIMException?) {
+                    if (e==null&&!list!!.isEmpty()){
+                        val messages = list!!.asReversed()
+                            .map {
+                                if (it is AVIMTextMessage) {
+                                    Message(
+                                        it.messageId,conId, it.text,name , TEXT_MESSAGE, it.from, unReadCount, it.timestamp,  ""
+                                    )
+                                }else if ( it is AVIMImageMessage){
+                                    Message(
+                                        it.messageId,conId, it.fileUrl,name , IMAGE_MESSAGE, it.from, unReadCount, it.timestamp,  ""
+                                    )
+                                } else {
+                                    throw Throwable("can not find this type")
+                                }
+                            }.toList()
+                        Log.d("query result",messages.toString())
+                        repository.insert(messages)
+                    }
+                }
+            })
+
+        }
+    }
+
+    override fun queryMessageByTime(id: String, timeStamp: Long) {
+        getConversation(id){
+            conversation->
+            val unReadCount = conversation.unreadMessagesCount
+            val name = conversation.name
+            val conId = conversation.conversationId
+           conversation.queryMessages(id,timeStamp,20,object :AVIMMessagesQueryCallback(){
+
+               override fun done(list: MutableList<AVIMMessage>?, e: AVIMException?) {
+                   if (e==null&&!list!!.isEmpty()){
+                       val messages = list!!.asReversed()
+                           .map {
+                               if (it is AVIMTextMessage) {
+                                   Message(
+                                       it.messageId,conId, it.text,name , TEXT_MESSAGE, it.from, unReadCount, it.timestamp,  ""
+                                   )
+                               }else if (it is AVIMImageMessage){
+                                   Message(
+                                       it.messageId,conId, it.fileUrl,name ,
+                                       IMAGE_MESSAGE, it.from, unReadCount, it.timestamp,  ""
+                                   )
+                               } else {
+                                   throw Throwable("can not find this type")
+                               }
+                           }.toList()
+                       repository.insert(messages)
+                   }
+               }
+           })
         }
     }
 

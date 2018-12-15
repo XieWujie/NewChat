@@ -1,67 +1,48 @@
 package com.example.administrator.newchat.core
 
-import android.content.Context
 import com.avos.avoscloud.*
+import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback
 import com.example.administrator.newchat.CoreChat
-import com.example.administrator.newchat.data.AppDatabase
 import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.data.contacts.ContactRespository
+import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.utilities.CONTACT
 import com.example.administrator.newchat.utilities.CONTACTS
 import com.example.administrator.newchat.utilities.USER_NAME
-import com.example.administrator.newchat.utilities.runOnNewThread
-import org.json.JSONObject
 
-class ContactsManage(context: Context):AbstractContacts{
 
-    private lateinit var contactRespository: ContactRespository
+
+class ContactsManage(private val respository: ContactRespository,
+                     private val client: AVIMClient,
+                     private val contact_list_id: String,
+                     private val owner:User
+):AbstractContacts{
+
 
     init {
-        contactRespository = ContactRespository.getInstance(AppDatabase.getInstance(context).getContactsDao())
+        cacheContactByNet()
     }
-
-    override fun addContact(contact_list_id: String, contact: Contact) {
+    override fun addContact(contact: Contact) {
         val o = AVObject.createWithoutData(CONTACT,contact_list_id)
         o.add(CONTACTS,contact.toString())
         o.saveInBackground()
-        contactRespository.addContact(contact)
+        respository.addContact(contact)
     }
 
-    override fun removeContact(contact_list_id: String, contact: Contact) {
-
-    }
-
-    override fun markContactName(contact_list_id: String, contactId: String, markName: String) {
+    override fun removeContact(contact: Contact) {
 
     }
 
+    override fun markContactName( contactId: String, markName: String) {
 
-    override fun getAllContactsId(contact_list_id: String, callback: (contact: List<String>) -> Unit) {
-       val list =  contactRespository.getContactId()
-        if (list==null || list.isEmpty()) {
-            getContactIdByNet(contact_list_id){
-               //contactRespository.addContacts(list)
-                callback(it)
-        }
-        }else{
-            callback(list)
-        }
     }
 
-    private fun getContactIdByNet(ownerId: String,callback: (contact: List<String>) -> Unit){
-         val o = AVObject.createWithoutData(CONTACT,ownerId)
-         val newList = o.getList(CONTACTS)
-             .asReversed()
-             .filter { it == null || (!(it is String) )}
-             .map {
-                 it as String
-             }
-             .toList()
-        callback(newList)
-    }
 
-    override fun cacheContactByNet(contact_list_id: String) {
-            val o = AVObject.createWithoutData(CONTACT,contact_list_id)
+    override fun cacheContactByNet() {
+
             val q = AVQuery<AVObject>(CONTACT)
             q.whereEqualTo("objectId",contact_list_id)
             q.findInBackground(object :FindCallback<AVObject>(){
@@ -70,14 +51,14 @@ class ContactsManage(context: Context):AbstractContacts{
                         val list = p0[0].getList(CONTACTS)
                         list?.forEach {
                             if (it is String){
-                                val (id,name) = it.divide()
+                                val (id,name,conversationId) = it.divide()
                                 val o = AVObject.createWithoutData("_User",id)
                                 o.fetchInBackground(object :GetCallback<AVObject>(){
                                     override fun done(p0: AVObject?, p1: AVException?) {
                                         if (p1==null&&p0!=null){
                                             val nickname = p0.getString(USER_NAME)
-                                            val contact = Contact(id,nickname,name,CoreChat.userId!!)
-                                            contactRespository.addContact(contact)
+                                            val contact = Contact(id,nickname,name,conversationId,owner.userId)
+                                            respository.addContact(contact)
                                         }else{
                                             p1?.printStackTrace()
                                         }
@@ -94,12 +75,23 @@ class ContactsManage(context: Context):AbstractContacts{
 
     }
 
-    private fun String.divide():Pair<String,String>{
+    private fun String.divide():Triple<String,String,String>{
         val list = this.split("-")
-        if (list.size==2){
-            return list[0] to list[1]
+        if (list.size==3){
+            return Triple(list[0],list[1],list[2])
         }else{
             throw Throwable("params is not two")
         }
+    }
+
+    override fun findConversationId(contactIds: List<String>,name:String, callback: (conversationId: String) -> Unit) {
+        client.createConversation(contactIds,name,null,object :AVIMConversationCreatedCallback(){
+
+            override fun done(c: AVIMConversation?, e: AVIMException?) {
+                if (e == null){
+                    callback(c!!.conversationId)
+                }
+            }
+        })
     }
 }

@@ -11,7 +11,7 @@ data class User(
     val userId:String,
     val name:String,
     val password:String,
-    val loginTime:Int,
+    val loginTime:Long,
     var isLogout:Boolean = true,
     val contactListId:String
 )

@@ -2,17 +2,17 @@ package com.example.administrator.newchat.data.message
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
 
 @Entity(tableName = "message")
 data class Message(
-    @PrimaryKey(autoGenerate = true)
-    val id:Int = 1,
-    val clientId:String,
+    @PrimaryKey()
+    val id:String,
+    val conversationId:String,
     val message:String,
-    val ownerId:String,
+    val name:String,
     val type:Int,
     val from:String,
-    val isMe:Boolean,
-    val avator:String?
+    val unReadCount:Int,
+    val createAt:Long,
+    val avatar:String?
 )

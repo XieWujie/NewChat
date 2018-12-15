@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.administrator.newchat.data.message.MessageRepository
 
-class ChatModelFactory(private val messageRepository: MessageRepository):ViewModelProvider.NewInstanceFactory(){
+class MessageModelFactory(private val messageRepository: MessageRepository):ViewModelProvider.NewInstanceFactory(){
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return ChatModel(messageRepository) as T
+        return MessageModel(messageRepository) as T
     }
 }

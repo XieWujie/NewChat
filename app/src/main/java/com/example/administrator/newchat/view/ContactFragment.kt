@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.adapter.ContactAdapter
+import com.example.administrator.newchat.custom.RcDecoration
 import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.databinding.ContactListLayoutBinding
 import com.example.administrator.newchat.utilities.ViewModelFactoryUtil
@@ -29,10 +30,10 @@ class ContactFragment:Fragment(){
         val model = ViewModelProviders.of(this,factory).get(ContactModel::class.java)
         binding.setLifecycleOwner(this)
         val recyclerView = binding.cRecyclerview
+        recyclerView.addItemDecoration(RcDecoration())
         adapter = ContactAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        if (CoreChat.userId!=null)
         model.getAllContacts(CoreChat.userId!!).observe(this, Observer {
             if (!it.isNullOrEmpty()){
                 adapter.submitList(it)
