@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data >
+        <variable name="presenter" type="com.example.administrator.newchat.utilities.MainDrawPresenter"/>
+    </data>
+<LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical"
+             android:background="#FFFFFF"
+             android:fitsSystemWindows="true"
+             tools:context=".view.MainDrawFragment">
+
+    <ImageView android:layout_width="match_parent"
+               android:id="@+id/avatar"
+               android:fitsSystemWindows="true"
+               imageSrc="@{presenter.avatar}"
+               android:scaleType="centerCrop"
+               android:layout_height="250dp"/>
+
+</LinearLayout>
+</layout>

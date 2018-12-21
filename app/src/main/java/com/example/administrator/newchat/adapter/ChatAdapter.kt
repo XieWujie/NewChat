@@ -1,6 +1,7 @@
 package com.example.administrator.newchat.adapter
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
@@ -12,6 +13,7 @@ import com.example.administrator.newchat.databinding.RightLayoutImageBinding
 import com.example.administrator.newchat.databinding.RightLayoutTextBinding
 import com.example.administrator.newchat.utilities.IMAGE_MESSAGE
 import com.example.administrator.newchat.utilities.TEXT_MESSAGE
+import com.example.administrator.newchat.utilities.VERIFY_MESSAGE
 
 class ChatAdapter:PagedListAdapter<Message,BaseHolder>(MessageDiffCallBack()){
 
@@ -37,7 +39,7 @@ class ChatAdapter:PagedListAdapter<Message,BaseHolder>(MessageDiffCallBack()){
     override fun getItemViewType(position: Int): Int {
         return getItem(position)!!.let {
             when(it.type){
-                TEXT_MESSAGE ->if (it.from == CoreChat.userId!!) TYPE_TEXT_RIGHT else TYPE_TEXT_LEFT
+                TEXT_MESSAGE, VERIFY_MESSAGE ->if (it.from == CoreChat.userId!!) TYPE_TEXT_RIGHT else TYPE_TEXT_LEFT
                 IMAGE_MESSAGE ->if (it.from == CoreChat.userId!!) TYPE_IMAGE_RIGHT else TYPE_IMAGE_LEFT
                 else ->throw Throwable("have not find this type")
         }

@@ -5,7 +5,6 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
@@ -67,8 +66,8 @@ class BottomInput:LinearLayout{
 
     private fun sendText(content:String){
         check()
-        val message = Message("",conversationId!!,content,conversationName!!, TEXT_MESSAGE,userId,1,date.time,"")
-        CoreChat.sendText(message)
+        val message = Message("",conversationId!!,content,conversationName!!, TEXT_MESSAGE,userId,1,date.time,CoreChat.userId!!,CoreChat.owner?.avatar)
+        CoreChat.sendMessage(message)
     }
 
     private fun check(){

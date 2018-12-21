@@ -1,6 +1,7 @@
 package com.example.administrator.newchat.core
 
 
+import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.data.message.Message
 
 interface AbstractMessage{

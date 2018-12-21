@@ -9,7 +9,8 @@ data class Contact(
     val nickName:String,
     val name:String = nickName,
     val conversationId:String,
-    val ownerId:String
+    val ownerId:String,
+    val avatar:String?
 ){
 
     override fun toString(): String {

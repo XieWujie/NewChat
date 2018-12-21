@@ -6,8 +6,11 @@ import com.example.administrator.newchat.data.contacts.Contact
 
 interface AbstractContacts{
 
-
     fun addContact(contact: Contact)
+
+    fun addContactById(id: String,markName: String,conversationId: String)
+
+    fun addContactById(id:String,markName: String)
 
     fun removeContact(contact: Contact)
 
@@ -15,6 +18,6 @@ interface AbstractContacts{
 
     fun cacheContactByNet()
 
-    fun findConversationId(contactIds: List<String>,name:String, callback: (conversationId: String) -> Unit)
+    fun findConversationId(contactIds: List<String>, callback: (conversationId: String) -> Unit)
 
 }

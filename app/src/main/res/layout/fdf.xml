@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <ImageView
+            android:id="@+id/chat_left_iv_avatar"
+            style="@style/ChatAvatar"
+            imageSrc="@{message.avatar}"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"/>
+    <LinearLayout
+            android:id="@+id/chat_left_layout_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/chat_left_iv_avatar"
+            android:orientation="horizontal"
+            android:paddingRight="40dp"/>
+    <TextView android:layout_width="wrap_content"
+              android:text="@{message.message}"
+              android:gravity="center_vertical"
+              android:background="@drawable/left_bg"
+              android:layout_height="wrap_content"/>
+
+    <FrameLayout
+            android:id="@+id/chat_left_layout_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/chat_left_layout_content"
+            android:visibility="gone">
+
+        <ProgressBar
+                android:id="@+id/chat_left_progressbar"
+                style="@android:style/Widget.ProgressBar.Large"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"/>
+
+        <TextView
+                android:id="@+id/chat_left_tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:visibility="gone"/>
+
+        <ImageView
+                android:id="@+id/chat_left_tv_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/chat_resend_bg"/>
+    </FrameLayout>
+</LinearLayout>

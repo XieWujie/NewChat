@@ -2,6 +2,7 @@ package com.example.administrator.newchat.utilities
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,20 +12,29 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.avos.avoscloud.AVObject
+import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.databinding.AddDialogLayoutBinding
+import com.example.administrator.newchat.view.ChatActivity
 
 class UserHomePresenter(val o:AVObject,val nav: NavController){
 
     private var dialog:Dialog? = null
     val username = o.getString(USER_NAME)
+    val avatar = o.getString(AVATAR)
 
     fun add(view:View){
         createDialog(view)
     }
 
     fun sendMessage(view: View){
-
+        val context = view.context
+        val intent = Intent(context,ChatActivity::class.java)
+        CoreChat.findConversationId(o.objectId){
+            intent.putExtra(CONVERSATION__NAME,username)
+            intent.putExtra(CONVERSATION_ID,it)
+            context.startActivity(intent)
+        }
     }
 
     private fun createDialog(view: View){

@@ -45,14 +45,15 @@ class LoginFragment:Fragment(){
                 logInHelper.setWeakActivity(WeakReference(activity!!))
                 binding.loginhelper = logInHelper
             }else{
-                CoreChat.loginByPassword(it.name,it.password){ any->
-                    if (any is User){
-                        val intent = Intent(requireContext(),MainActivity::class.java)
-                        startActivity(intent)
-                    }else if (any is Exception){
-                        Snackbar.make(binding.root,any.message as CharSequence, Snackbar.LENGTH_LONG)
-                    }
-                }
+                binding.loginhelper = LogInHelper(it.name,it.password)
+//                CoreChat.loginByPassword(it.name,it.password){ any->
+//                    if (any is User){
+//                        val intent = Intent(requireContext(),MainActivity::class.java)
+//                       // startActivity(intent)
+//                    }else if (any is Exception){
+//                        Snackbar.make(binding.root,any.message as CharSequence, Snackbar.LENGTH_LONG)
+//                    }
+//                }
             }
         })
     }

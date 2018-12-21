@@ -5,22 +5,29 @@
     <data>
         <variable name="presenter" type="com.example.administrator.newchat.utilities.UserHomePresenter"/>
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".view.UserMessageFragment">
+        <ImageView android:layout_width="100dp"
+                   imageSrc="@{presenter.avatar}"
+                   android:id="@+id/user_avatar"
+                   android:scaleType="centerCrop"
+                   android:layout_centerHorizontal="true"
+                   android:layout_height="100dp"/>
+        <TextView android:layout_width="wrap_content"
+                  android:text="@{presenter.username}"
+                  android:layout_centerHorizontal="true"
+                  android:layout_below="@+id/user_avatar"
+                  android:layout_height="wrap_content"/>
 
 
         <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
                 android:layout_height="60dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp" android:id="@+id/bottom_nav"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintVertical_bias="1.0">
+               android:id="@+id/bottom_nav">
             <TextView android:layout_width="0dp"
                       android:text="添加好友"
                       android:layout_weight="1"
@@ -35,16 +42,6 @@
                       android:gravity="center"
                       android:layout_height="match_parent"/>
         </LinearLayout>
-        <TextView
-                android:text="TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp" app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginLeft="8dp" android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout3" android:layout_marginTop="116dp"
-                app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_bias="0.35000002"
-                app:layout_constraintHorizontal_bias="0.532"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 
 </layout>

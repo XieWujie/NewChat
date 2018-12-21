@@ -37,6 +37,10 @@ object CoreChat{
         this.abstractUser = userManager
     }
 
+    fun addContact(contact:Contact){
+        contacts?.addContact(contact)
+    }
+
     fun addMessageManage(messageManage: AbstractMessage){
         this.abstractMessage = messageManage
     }
@@ -85,22 +89,18 @@ object CoreChat{
         }
     }
 
-    fun addContact(contact:Contact){
-        contacts?.addContact(contact)
-    }
-
     fun logout(){
         check()
         owner?.isLogout = true
         abstractUser!!.logout(owner!!)
     }
 
-    fun sendText(message:Message){
+    fun sendMessage(message:Message){
         abstractMessage?.sendMessage(message)
     }
 
     fun sendImage(path:String,conversationId: String,conversationName:String){
-        val message = Message("",conversationId,path,conversationName, IMAGE_MESSAGE, userId!!,1,0,"")
+        val message = Message("",conversationId,path,conversationName, IMAGE_MESSAGE, userId!!,1,0,CoreChat.userId!!,"")
         abstractMessage?.sendMessage(message)
     }
 
@@ -116,7 +116,19 @@ object CoreChat{
         abstractMessage?.queryMessageByTime(id,timeStamp)
     }
 
-    fun findConversationId(contactId:String,name:String, callback:(conversationId:String)->Unit){
-        contacts?.findConversationId(listOf(contactId),name,callback)
+    fun findConversationId(contactId:String, callback:(conversationId:String)->Unit){
+        contacts?.findConversationId(listOf(contactId),callback)
+    }
+
+    fun setAvatar(path:String){
+        abstractUser?.setAvatar(path)
+    }
+
+    fun addContactById(id:String,markName:String){
+        contacts?.addContactById(id,markName)
+    }
+
+    fun addContactById(id:String,markName:String,conversationId: String){
+        contacts?.addContactById(id,markName,conversationId)
     }
 }

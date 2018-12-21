@@ -12,4 +12,6 @@ interface AbstractUser{
     fun login(username: String,password: String,callback: (any:Any,client: AVIMClient?) -> Unit)
 
     fun logout(user: User)
+
+    fun setAvatar(path:String)
 }

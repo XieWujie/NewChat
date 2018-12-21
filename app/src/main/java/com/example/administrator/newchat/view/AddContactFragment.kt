@@ -35,7 +35,7 @@ class AddContactFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate<AddContactFragmentBinding>(inflater,R.layout.add_contact_fragment,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.add_contact_fragment,container,false)
         init()
         return binding.root
     }

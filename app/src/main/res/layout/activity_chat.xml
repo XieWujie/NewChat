@@ -9,6 +9,7 @@
         android:orientation="vertical"
         tools:context=".view.ChatActivity">
     <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent"
+                                                     android:background="@color/chatActivity"
                                                      android:layout_height="?attr/actionBarSize">
         <androidx.appcompat.widget.Toolbar android:layout_width="match_parent"
                                            android:id="@+id/toolbar"

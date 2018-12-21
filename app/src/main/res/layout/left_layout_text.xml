@@ -1,27 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
         <variable name="message" type="com.example.administrator.newchat.data.message.Message"/>
     </data>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:orientation="horizontal"
                   android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="5dp"
+                  android:layout_marginLeft="15dp"
+                  android:layout_marginRight="15dp"
+                  android:layout_marginTop="5dp"
+                  android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/chat_left_tv_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                time="@{message.createAt}"
+                android:layout_marginTop="10dp"
+                android:gravity="center"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                android:layout_marginRight="2dp">
 
 
-        <ImageView
-                android:id="@+id/chat_user_avatar"
-                android:layout_width="40dp"
-                android:background="@drawable/user_default_avator"
-                imageSrc="@{message.avatar}"
-                android:layout_height="40dp"/>
-        <TextView android:layout_width="match_parent"
-                  android:layout_marginRight="40dp"
-                  android:layout_marginLeft="5dp"
-                  android:layout_marginTop="10dp"
-                  android:gravity="left"
-                  android:text="@{message.message}"
-                  android:layout_height="wrap_content"/>
+            <ImageView
+                    android:id="@+id/chat_left_iv_avatar"
+                    style="@style/ChatAvatar"
+                    imageSrc="@{message.avatar}"
+                    android:scaleType="centerCrop"/>
+            <LinearLayout
+                    android:id="@+id/chat_left_layout_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+            />
+            <TextView android:layout_width="wrap_content"
+                      android:text="@{message.message}"
+                      android:textSize="15sp"
+                      android:textColor="#000000"
+                      android:gravity="center_vertical"
+                      android:background="@drawable/left_bg"
+                      android:layout_height="wrap_content"/>
 
+            <FrameLayout
+                    android:id="@+id/chat_left_layout_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignRight="@+id/chat_left_layout_content"
+                    android:visibility="gone">
+
+                <ProgressBar
+                        android:id="@+id/chat_left_progressbar"
+                        style="@android:style/Widget.ProgressBar.Large"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"/>
+
+                <TextView
+                        android:id="@+id/chat_left_tv_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:visibility="gone"/>
+
+                <ImageView
+                        android:id="@+id/chat_left_tv_error"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/chat_resend_bg"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/chat_left_tv_name"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="true"/>
     </LinearLayout>
 </layout>

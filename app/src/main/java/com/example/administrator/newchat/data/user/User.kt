@@ -13,5 +13,6 @@ data class User(
     val password:String,
     val loginTime:Long,
     var isLogout:Boolean = true,
-    val contactListId:String
+    val contactListId:String,
+    var avatar:String?
 )

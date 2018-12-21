@@ -29,6 +29,7 @@ import com.example.administrator.newchat.utilities.*
 import com.example.administrator.newchat.viewmodel.MessageModel
 import com.google.android.material.snackbar.Snackbar
 import java.lang.RuntimeException
+import java.util.*
 
 
 class ChatFragment : Fragment() {
@@ -85,12 +86,14 @@ class ChatFragment : Fragment() {
                dispatchEvent(type)
            }
        })
-       CoreChat.queryMessageByConversationId(id)
+       //CoreChat.queryMessageByConversationId(id)
        model.getMessage(id).observe(this, Observer {
            adapter.submitList(it)
        })
        adapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
-           override fun onChanged() {
+
+           override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+               super.onItemRangeInserted(positionStart, itemCount)
                binding.chatRcView.scrollToPosition(adapter.itemCount-1)
            }
        })
@@ -126,7 +129,9 @@ class ChatFragment : Fragment() {
     fun sendImageMessage(uri: Uri?) {
         if (uri!=null) {
             val realPath = ChatUtil.getRealPathFromURI(requireContext(), uri)
-            CoreChat.sendImage(realPath!!,conversationId!!,conversationName!!)
+            val message = Message("",conversationId!!,realPath!!,conversationName!!,
+                IMAGE_MESSAGE,CoreChat.userId!!,1,Date().time,CoreChat.userId!!,CoreChat.owner?.avatar)
+            CoreChat.sendMessage(message)
         }
     }
 

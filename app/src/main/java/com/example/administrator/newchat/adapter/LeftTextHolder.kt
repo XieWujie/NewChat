@@ -1,5 +1,6 @@
 package com.example.administrator.newchat.adapter
 
+import android.util.Log
 import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.databinding.LeftLayoutTextBinding
 

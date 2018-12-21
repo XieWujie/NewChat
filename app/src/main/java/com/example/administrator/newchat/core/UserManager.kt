@@ -4,8 +4,10 @@ import com.avos.avoscloud.*
 import com.avos.avoscloud.im.v2.AVIMClient
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
+import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.data.user.UserRepository
+import com.example.administrator.newchat.utilities.AVATAR
 import com.example.administrator.newchat.utilities.CONTACT
 import com.example.administrator.newchat.utilities.CONTACTS_LIST_ID
 import java.util.*
@@ -47,26 +49,33 @@ class UserManager(private val repository: UserRepository):AbstractUser{
                 if (p1==null&&a!=null){
                     a.put(CONTACTS_LIST_ID,contactListId)
                     a.saveInBackground(object :SaveCallback(){
+
                         override fun done(e: AVException?) {
                             if (e==null){
                                 val client = AVIMClient.getInstance(a)
                                 client.open(object :AVIMClientCallback(){
                                     override fun done(p0: AVIMClient?, p1: AVIMException?) {
+
                                         if (p1==null){
-                                            val user = User(a.objectId,username,password,Date().time,false,contactListId)
+                                            val user = User(a.objectId,username,password,Date().time,false,contactListId,null)
                                             repository.addUser(user)
                                             callback(user,p0)
+                                        }else{
+                                            callback(p1,null)
+                                            p1.printStackTrace()
                                         }
                                     }
                                 })
                             }else{
                                 callback(e,null)
+                                e.printStackTrace()
                             }
                         }
 
                     })
                 }else{
                     callback(p1!!,null)
+                    p1?.printStackTrace()
                 }
             }
         })
@@ -80,8 +89,9 @@ class UserManager(private val repository: UserRepository):AbstractUser{
                     client.open(object :AVIMClientCallback(){
                         override fun done(c: AVIMClient?, e: AVIMException?) {
                             if (e==null){
+                                val avatar = avUser.getString(AVATAR)
                                 val user = User(avUser.objectId,username,password,Date().time,false,avUser.getString(
-                                    CONTACTS_LIST_ID))
+                                    CONTACTS_LIST_ID),avatar)
                                 repository.addUser(user)
                                 callback(user,c)
                             }else{
@@ -101,5 +111,21 @@ class UserManager(private val repository: UserRepository):AbstractUser{
 
    override fun logout(user: User){
         repository.updata(user)
+    }
+
+    override fun setAvatar(path: String) {
+        val avFile = AVFile.withAbsoluteLocalPath("${CoreChat.owner!!.name}.jpg",path)
+        avFile.saveInBackground(object :SaveCallback(){
+            override fun done(e: AVException?) {
+                if (e == null){
+                    val o = AVObject.createWithoutData("_User",CoreChat.userId)
+                    o.put(AVATAR,avFile.url)
+                    o.saveInBackground()
+                    val user = CoreChat.owner!!.copy(avatar = avFile.url)
+                    repository.updata(user)
+                    CoreChat.owner = user
+                }
+            }
+        })
     }
 }

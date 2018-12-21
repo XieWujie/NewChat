@@ -1,15 +1,11 @@
 package com.example.administrator.newchat.view
 
-
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -20,10 +16,6 @@ import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.databinding.ActivityMainBinding
 import com.example.administrator.newchat.utilities.*
-import androidx.annotation.NonNull
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,8 +26,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        setStatusBar()
         navController = findNavController(R.id.main_nav_fragment)
         initUI()
+    }
+
+    fun setStatusBar() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            val window = this.window
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = Color.parseColor("#ff5CACFC")
+            window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+          //  window.statusBarColor = Color.TRANSPARENT
+            binding.drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
+            binding.drawerLayout.fitsSystemWindows = true
+        }
     }
 
 
@@ -55,9 +61,15 @@ class MainActivity : AppCompatActivity() {
                  binding.bottomNav.visibility = View.GONE
                  binding.toolbar.visibility = View.GONE
              }
-                R.id.messageFragment,R.id.contactFragment->{
+                R.id.messageFragment->{
                     binding.bottomNav.visibility = View.VISIBLE
                     binding.toolbar.visibility = View.VISIBLE
+                    setTitle("消息")
+                }
+                R.id.contactFragment->{
+                    binding.bottomNav.visibility = View.VISIBLE
+                    binding.toolbar.visibility = View.VISIBLE
+                    setTitle("联系人")
                 }
             }
         }
