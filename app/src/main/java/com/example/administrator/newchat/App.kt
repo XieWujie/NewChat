@@ -4,6 +4,7 @@ import android.app.Application
 import com.avos.avoscloud.AVOSCloud
 import com.avos.avoscloud.PushService
 import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMClientEventHandler
 import com.avos.avoscloud.im.v2.AVIMMessageManager
 import com.example.administrator.newchat.core.MessageHandler
 import com.example.administrator.newchat.custom.VerifyMessage
@@ -24,7 +25,20 @@ class App:Application(){
         AVIMMessageManager.registerDefaultMessageHandler(MessageHandler())
         AVIMClient.setMessageQueryCacheEnable(false)
         AVIMMessageManager.registerAVIMMessageType(VerifyMessage::class.java)
-    //    AVIMClient.setUnreadNotificationEnabled(true)
         CoreChat.init(this)
+        AVIMClient.setClientEventHandler(object :AVIMClientEventHandler(){
+            override fun onConnectionResume(p0: AVIMClient?) {
+
+            }
+
+            override fun onConnectionPaused(p0: AVIMClient?) {
+
+            }
+
+            override fun onClientOffline(p0: AVIMClient?, p1: Int) {
+
+            }
+
+        })
     }
 }

@@ -17,16 +17,14 @@ class AddDialogHelper(val o:AVObject,val  navController: NavController,val dialo
     @Bindable var markName:String = ""
 
     fun send(view:View){
-        CoreChat.findConversationId(o.objectId){
-            val ownerId = CoreChat.userId!!
-            val message = Message("",it,VerifyMessage.REQUEST.toString(),o.getString(USER_NAME),
-                VERIFY_MESSAGE,ownerId,1,0,ownerId, o.getString(
-                AVATAR))
-            CoreChat.sendMessage(message)
+
+        CoreChat.addContact(o.objectId,markName,o.getString(AVATAR)){
+            if (it == null){
+                navController.navigate(R.id.action_userMessageFragment_to_contactFragment)
+                Snackbar.make(view,"已发送",Snackbar.LENGTH_LONG).show()
+                dialog.dismiss()
+            }
         }
-        navController.navigate(R.id.action_userMessageFragment_to_contactFragment)
-        Snackbar.make(view,"已发送",Snackbar.LENGTH_LONG).show()
-        dialog.dismiss()
     }
 
     fun cancel(view: View){

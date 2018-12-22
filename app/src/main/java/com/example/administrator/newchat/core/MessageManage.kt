@@ -13,6 +13,7 @@ import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.data.message.MessageRepository
 import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.utilities.*
+import java.lang.Exception
 
 
 class MessageManage(
@@ -31,24 +32,26 @@ class MessageManage(
 
 
 
-    override fun sendMessage(message: Message) {
+    override fun sendMessage(message: Message,e:(e:Exception?)->Unit) {
         getConversation(message.conversationId) {
            when(message.type){
-               TEXT_MESSAGE ->sendTextMessage(it,message)
-               IMAGE_MESSAGE ->sendImageMessage(it,message)
-               VERIFY_MESSAGE->sendVerifyMessage(it,message.message)
+               TEXT_MESSAGE ->sendTextMessage(it,message,e)
+               IMAGE_MESSAGE ->sendImageMessage(it,message,e)
+               VERIFY_MESSAGE->sendVerifyMessage(it,message.message,e)
            }
         }
     }
 
-     fun sendVerifyMessage(c:AVIMConversation,type:String){
+     fun sendVerifyMessage(c:AVIMConversation,type:String,exception:(e:Exception?)->Unit){
          val m = VerifyMessage()
          m.type = type
          c.sendMessage(m,avimMessageOption,object :AVIMConversationCallback(){
              override fun done(e: AVIMException?) {
                  if (e == null) {
-
+                     c.read()
+                     exception(e)
                     } else {
+                     exception(e)
                         e.printStackTrace()
                     }
                 }
@@ -80,7 +83,7 @@ class MessageManage(
         }
     }
 
-    private fun sendTextMessage(conversation: AVIMConversation,message: Message){
+    private fun sendTextMessage(conversation: AVIMConversation,message: Message,exeption:(e:Exception?)->Unit){
         val m = AVIMTextMessage()
         m.text = message.message
         checkConversation(conversation) {
@@ -89,8 +92,11 @@ class MessageManage(
                     if (e == null) {
                         val new = message.copy(id = m.messageId, createAt = m.timestamp)
                         repository.insert(new)
+                        conversation.read()
+                        exeption(e)
                     } else {
                         e.printStackTrace()
+                        exeption(e)
                     }
                 }
             })
@@ -124,13 +130,20 @@ class MessageManage(
         }
     }
 
-    private fun sendImageMessage(conversation: AVIMConversation,message: Message){
+    private fun sendImageMessage(conversation: AVIMConversation,message: Message,exeption:(e:Exception?)->Unit){
+        repository.insert(message)
         val imageMessage = AVIMImageMessage(message.message)
         conversation.sendMessage(imageMessage,avimMessageOption,object :AVIMConversationCallback(){
             override fun done(e: AVIMException?) {
                 if (e == null){
-                    val message = message.copy(id = imageMessage.messageId,createAt = imageMessage.timestamp)
+                    val message = message.copy(id = imageMessage.messageId,createAt = imageMessage.timestamp,sendState = SEND_SUCCEED)
                     repository.insert(message)
+                    conversation.read()
+                    exeption(e)
+                }else{
+                    val message = message.copy(id = imageMessage.messageId?:message.id,sendState = SEND_FAIL)
+                    repository.insert(message)
+                    exeption(e)
                 }
             }
         })
@@ -147,7 +160,7 @@ class MessageManage(
         query.findInBackground(object :AVIMConversationQueryCallback(){
             override fun done(list: MutableList<AVIMConversation>?, e: AVIMException?) = if (e == null){
                 list!!.forEach{
-                    queryMessageByConversationId(it.conversationId)
+                    queryMessageByConversationId(it.conversationId,1)
                 }
             }else{
                 e.printStackTrace()
@@ -157,42 +170,15 @@ class MessageManage(
 
 
 
-    override fun queryMessageByConversationId(id: String) {
+    override fun queryMessageByConversationId(id: String,limit:Int) {
         getConversation(id){
             conversation->
-            val unReadCount = conversation.unreadMessagesCount
-            val conId = conversation.conversationId
-            var avatar:String? = null
-            var name:String? = null
-            conversation.queryMessages(object :AVIMMessagesQueryCallback(){
+            conversation.queryMessages(limit,object :AVIMMessagesQueryCallback(){
                 override fun done(list: MutableList<AVIMMessage>?, e: AVIMException?) {
-                    if (e==null&&!list!!.isEmpty()){
-                        if (avatar == null){
-                            val m = list[0]
-                            val map = conversation["Info"] as Map<String,String>
-                            val id = m.from
-                            name = map[getKey(id, USER_NAME)] as String
-                            avatar = map[getKey(id, AVATAR)]
+                    if (e==null){
+                        convertMessages(conversation, list!!){
+                            repository.insert(it)
                         }
-                        val messages = list!!.asReversed()
-                            .map {
-                                if (it is AVIMTextMessage ) {
-                                    Message(
-                                        it.messageId,conId, it.text,name?:conversation.name, TEXT_MESSAGE, it.from, unReadCount, it.timestamp,owner.userId ,avatar
-                                    )
-                                }else if ( it is AVIMImageMessage){
-                                    Message(
-                                        it.messageId,conId, it.fileUrl,name?:conversation.name, IMAGE_MESSAGE, it.from, unReadCount, it.timestamp,CoreChat.userId!!,  avatar
-                                    )
-                                } else if (it is VerifyMessage) {
-                                    Message(
-                                        it.messageId,conId, it.type,name?:conversation.name, VERIFY_MESSAGE, it.from, unReadCount, it.timestamp,owner.userId ,avatar
-                                    )
-                                } else {
-                                    throw Throwable("can not find this type")
-                                }
-                            }.toList()
-                        repository.insert(messages)
                     }
                 }
             })
@@ -203,39 +189,57 @@ class MessageManage(
     override fun queryMessageByTime(id: String, timeStamp: Long) {
         getConversation(id){
             conversation->
-            val unReadCount = conversation.unreadMessagesCount
-            val conId = conversation.conversationId
-            var avatar:String? = null
-            var name:String? = null
            conversation.queryMessages(id,timeStamp,20,object :AVIMMessagesQueryCallback(){
 
                override fun done(list: MutableList<AVIMMessage>?, e: AVIMException?) {
-                   if (e==null&&!list!!.isEmpty()){
-                       if (avatar == null){
-                           val get = conversation.get(list[0].from) as String
-                           val(n,a) = get.H()
-                           name = n
-                           avatar = a
+                   if (e==null){
+                       convertMessages(conversation,list!!){
+                           repository.insert(it)
                        }
-                       val messages = list!!.asReversed()
-                           .map {
-                               if (it is AVIMTextMessage) {
-                                   Message(
-                                       it.messageId,conId, it.text,name?:conversation.name , TEXT_MESSAGE, it.from, unReadCount, it.timestamp,owner.userId,  avatar
-                                   )
-                               }else if (it is AVIMImageMessage){
-                                   Message(
-                                       it.messageId,conId, it.fileUrl,name?:conversation.name,
-                                       IMAGE_MESSAGE, it.from, unReadCount, it.timestamp,CoreChat.userId!!,  avatar
-                                   )
-                               } else {
-                                   throw Throwable("can not find this type")
-                               }
-                           }.toList()
-                       repository.insert(messages)
                    }
                }
            })
         }
+    }
+
+    private fun convertMessages(conversation: AVIMConversation, messages:List<AVIMMessage>,convertCallback:(m:List<Message>)->Unit){
+        if (messages.isEmpty()){
+            return
+        }
+        val from = messages[0].from
+        val ownerId = owner.userId
+        val unReadCount = conversation.unreadMessagesCount
+        val conId = conversation.conversationId
+        val map = conversation["Info"] as Map<String,String?>
+        val  name = map[getKey(from, USER_NAME)] ?:""
+        val avatar = map[getKey(from, AVATAR)]
+        val list = messages.asReversed()
+            .map {
+                when(it){
+                    is AVIMTextMessage->{
+                        Message(
+                            it.messageId,conId, it.text,name, TEXT_MESSAGE, it.from, unReadCount, it.timestamp,ownerId ,SEND_SUCCEED,avatar
+                        )
+                    }
+                    is  AVIMImageMessage->{
+                        Message(
+                            it.messageId,conId, it.fileUrl,name, IMAGE_MESSAGE, it.from, unReadCount, it.timestamp,ownerId,SEND_SUCCEED,avatar
+                        )
+                    }
+                    is VerifyMessage->{
+                        Message(
+                            it.messageId,conId, it.type,name, VERIFY_MESSAGE, it.from, unReadCount, it.timestamp,ownerId, SEND_SUCCEED,avatar
+                        )
+                    }
+                    else->{
+                        Message(it.messageId,conId,it.content,name, UNKNOW_TYPE,from,0,it.timestamp, owner.userId, SEND_SUCCEED,avatar)
+                    }
+                }
+            }.toList()
+        convertCallback(list)
+    }
+
+    override fun deleteMessage(message: Message) {
+        repository.delete(message)
     }
 }

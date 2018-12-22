@@ -18,10 +18,9 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
-                android:name=".view.MainActivity"
-                android:launchMode="singleTask">
+                android:name=".view.MainActivity" android:launchMode="singleTask">
         </activity>
-        <activity android:name=".view.LogInActivity">
+        <activity android:name=".view.LogInActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -39,7 +38,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".view.ChatActivity">
+        <activity android:name=".view.ChatActivity" android:launchMode="singleTask">
         </activity>
     </application>
 

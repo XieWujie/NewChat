@@ -23,6 +23,8 @@ const val TEXT_MESSAGE = -1
 
 const val IMAGE_MESSAGE = -2
 
+const val UNKNOW_TYPE = -3
+
 const val VERIFY_MESSAGE = -10
 
 const val CONVERSATION_ID = "client_id"
@@ -30,3 +32,9 @@ const val CONVERSATION_ID = "client_id"
 const val CONVERSATION__NAME = "client_name"
 
 const val AVATAR = "avatar"
+
+const val SENDING = 0
+
+const val SEND_SUCCEED = 1
+
+const val SEND_FAIL = 2

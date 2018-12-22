@@ -41,7 +41,6 @@
                         style="@android:style/Widget.ProgressBar.Large"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:visibility="gone"
                         android:layout_gravity="center_vertical"/>
 
                 <TextView

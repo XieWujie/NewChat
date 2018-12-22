@@ -5,22 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.adapter.ContactAdapter
 import com.example.administrator.newchat.custom.RcDecoration
-import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.databinding.ContactListLayoutBinding
 import com.example.administrator.newchat.utilities.ViewModelFactoryUtil
 import com.example.administrator.newchat.viewmodel.ContactModel
-import com.google.android.material.snackbar.Snackbar
 
-class ContactFragment:Fragment(){
+class ContactFragment:BaseFragment(){
 
     private lateinit var binding:ContactListLayoutBinding
     private lateinit var adapter:ContactAdapter
@@ -40,10 +36,5 @@ class ContactFragment:Fragment(){
             }
         })
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adapter.notifyDataSetChanged()
     }
 }

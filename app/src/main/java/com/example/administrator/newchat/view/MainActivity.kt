@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = Color.parseColor("#ff5CACFC")
             window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
-          //  window.statusBarColor = Color.TRANSPARENT
             binding.drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
             binding.drawerLayout.fitsSystemWindows = true
         }
@@ -83,15 +83,16 @@ class MainActivity : AppCompatActivity() {
         return item?.onNavDestinationSelected(navController)?:false||super.onOptionsItemSelected(item)
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            val home = Intent(Intent.ACTION_MAIN)
-            home.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            home.addCategory(Intent.CATEGORY_HOME)
-            startActivity(home)
-            return true
+    override fun onBackPressed() {
+        if (!navController.popBackStack()){
+            backHome()
         }
-        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun backHome(){
+        val home = Intent(Intent.ACTION_MAIN)
+        home.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        home.addCategory(Intent.CATEGORY_HOME)
+        startActivity(home)
     }
 }

@@ -24,7 +24,7 @@ import com.example.administrator.newchat.utilities.ViewModelFactoryUtil
 import com.example.administrator.newchat.viewmodel.MessageModel
 import com.google.android.material.snackbar.Snackbar
 
-class MessageFragment:Fragment(){
+class MessageFragment:BaseFragment(){
 
     private lateinit var binding: MessageListLayoutBinding
     private lateinit var model: MessageModel

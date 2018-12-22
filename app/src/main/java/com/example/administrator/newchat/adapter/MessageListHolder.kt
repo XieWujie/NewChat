@@ -15,21 +15,24 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
     override fun bind(any: Any) {
         if (any is Message){
             binding.message = any
-            if (any.type == IMAGE_MESSAGE){
-                binding.contentText.text = "图片"
-            }else if (any.type == TEXT_MESSAGE){
-                binding.contentText.text = any.message
-            }else if (any.type == VERIFY_MESSAGE){
-                when(any.message){
-                    VerifyMessage.AGREE->{
-                        binding.contentText.text = "已同意好友请求"
-                    }
-                    VerifyMessage.REQUEST->{
-                        binding.contentText.text = "请求添加好友"
-                        binding.root.setOnClickListener{
-                            createAddContactDialog(any,binding.root.context)
+            val t = binding.contentText
+            when(any.type){
+                IMAGE_MESSAGE ->t.text = "图片"
+                TEXT_MESSAGE ->t.text = any.message
+                VERIFY_MESSAGE->{
+                    when(any.message){
+                        VerifyMessage.AGREE->{
+                            binding.contentText.text = "已同意好友请求"
                         }
-                        return
+                        VerifyMessage.REQUEST->{
+                            binding.contentText.text = "请求添加好友"
+                            if (any.unReadCount<0) {
+                                binding.root.setOnClickListener {
+                                    createAddContactDialog(any, binding.root.context)
+                                }
+                                return
+                            }
+                        }
                     }
                 }
             }
@@ -49,7 +52,11 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
             .setPositiveButton("同意"){ a,b->
                 CoreChat.addContactById(message.from,message.name)
                 val message = message.copy(message = VerifyMessage.AGREE.toString())
-                CoreChat.sendMessage(message)
+                CoreChat.sendMessage(message.name,message.conversationId, VERIFY_MESSAGE,VerifyMessage.AGREE){
+                    if (it == null){
+                        CoreChat.deleteMessage(message)
+                    }
+                }
                 a.dismiss()
             }
             .setNegativeButton("不同意"){ a,b->

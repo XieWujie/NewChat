@@ -15,5 +15,6 @@ data class Message(
     val unReadCount:Int,
     val createAt:Long,
     val owner:String,
+    val sendState:Int,
     val avatar:String?
 )

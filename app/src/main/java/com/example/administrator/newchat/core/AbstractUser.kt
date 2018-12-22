@@ -14,4 +14,5 @@ interface AbstractUser{
     fun logout(user: User)
 
     fun setAvatar(path:String)
+
 }

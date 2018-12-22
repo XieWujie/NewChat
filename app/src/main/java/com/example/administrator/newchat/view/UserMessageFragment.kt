@@ -15,7 +15,7 @@ import com.example.administrator.newchat.utilities.USER_NAME
 import com.example.administrator.newchat.utilities.UserHomePresenter
 
 
-class UserMessageFragment : Fragment() {
+class UserMessageFragment : BaseFragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentUserMessageBinding.inflate(inflater,container,false)
@@ -25,4 +25,5 @@ class UserMessageFragment : Fragment() {
         }
         return binding.root
     }
+
 }

@@ -3,8 +3,6 @@ package com.example.administrator.newchat.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.NavAction
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.administrator.newchat.R

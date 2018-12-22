@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.AVObject
@@ -18,7 +19,7 @@ import com.example.administrator.newchat.databinding.AddContactFragmentBinding
 import com.example.administrator.newchat.utilities.AddContactPresenter
 
 
-class AddContactFragment : Fragment() {
+class AddContactFragment :BaseFragment(){
 
     private lateinit var binding:AddContactFragmentBinding
     private lateinit var presenter: AddContactPresenter
@@ -31,7 +32,6 @@ class AddContactFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -62,5 +62,10 @@ class AddContactFragment : Fragment() {
             }
 
         })
+    }
+
+    override fun onBackPress(): Boolean {
+        findNavController().navigate(R.id.messageFragment)
+        return true
     }
 }

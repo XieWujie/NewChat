@@ -10,7 +10,9 @@ import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.databinding.BottomInputLayoutBinding
+import com.example.administrator.newchat.utilities.SENDING
 import com.example.administrator.newchat.utilities.TEXT_MESSAGE
+import kotlinx.android.synthetic.main.fragment_main_draw_layout.view.*
 import java.util.*
 
 class BottomInput:LinearLayout{
@@ -66,8 +68,9 @@ class BottomInput:LinearLayout{
 
     private fun sendText(content:String){
         check()
-        val message = Message("",conversationId!!,content,conversationName!!, TEXT_MESSAGE,userId,1,date.time,CoreChat.userId!!,CoreChat.owner?.avatar)
-        CoreChat.sendMessage(message)
+        CoreChat.sendMessage(conversationName!!,conversationId!!, TEXT_MESSAGE,content){
+
+        }
     }
 
     private fun check(){

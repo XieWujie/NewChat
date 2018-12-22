@@ -46,16 +46,16 @@ class LoginFragment:Fragment(){
                 binding.loginhelper = logInHelper
             }else{
                 binding.loginhelper = LogInHelper(it.name,it.password)
-//                CoreChat.loginByPassword(it.name,it.password){ any->
-//                    if (any is User){
-//                        val intent = Intent(requireContext(),MainActivity::class.java)
-//                       // startActivity(intent)
-//                    }else if (any is Exception){
-//                        Snackbar.make(binding.root,any.message as CharSequence, Snackbar.LENGTH_LONG)
-//                    }
+//                CoreChat.loginWithoutNet(it){
+//                    toMainActivity()
 //                }
             }
         })
+    }
+
+    private fun toMainActivity(){
+        val initent = Intent(requireContext(),MainActivity::class.java)
+        startActivity(initent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

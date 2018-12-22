@@ -50,28 +50,6 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val conversationId = activity?.intent?.getStringExtra(CONVERSATION_ID)
-        val conversationName = activity?.intent?.getStringExtra(CONVERSATION__NAME)
-        if (conversationId==null || conversationName==null){
-            throw RuntimeException("have not find this id")
-        }else{
-            binding.freshLayout.setOnRefreshListener{
-                val message = if (adapter.currentList?.size?:0>0){
-                    adapter?.currentList?.get(0)
-                }else{
-                    null
-                }
-                if (message!=null){
-                    CoreChat.queryMessageByTime(message.id,message.createAt)
-                }else{
-                    CoreChat.queryMessageByConversationId(conversationId)
-                }
-                binding.freshLayout.isRefreshing = false
-            }
-        }
-    }
-
     fun initView(){
         binding.chatRcView.layoutManager = LinearLayoutManager(requireContext())
         binding.chatRcView.adapter = adapter
@@ -86,7 +64,7 @@ class ChatFragment : Fragment() {
                dispatchEvent(type)
            }
        })
-       //CoreChat.queryMessageByConversationId(id)
+       CoreChat.queryMessageByConversationId(id,20)
        model.getMessage(id).observe(this, Observer {
            adapter.submitList(it)
        })
@@ -97,6 +75,19 @@ class ChatFragment : Fragment() {
                binding.chatRcView.scrollToPosition(adapter.itemCount-1)
            }
        })
+       binding.freshLayout.setOnRefreshListener{
+           val message = if (adapter.currentList?.size?:0>0){
+               adapter?.currentList?.get(0)
+           }else{
+               null
+           }
+           if (message!=null){
+               CoreChat.queryMessageByTime(message.id,message.createAt)
+           }else{
+               CoreChat.queryMessageByConversationId(id,20)
+           }
+           binding.freshLayout.isRefreshing = false
+       }
    }
 
     fun dispatchEvent(type: Int){
@@ -129,9 +120,11 @@ class ChatFragment : Fragment() {
     fun sendImageMessage(uri: Uri?) {
         if (uri!=null) {
             val realPath = ChatUtil.getRealPathFromURI(requireContext(), uri)
-            val message = Message("",conversationId!!,realPath!!,conversationName!!,
-                IMAGE_MESSAGE,CoreChat.userId!!,1,Date().time,CoreChat.userId!!,CoreChat.owner?.avatar)
-            CoreChat.sendMessage(message)
+            if (realPath !=null) {
+                CoreChat.sendMessage(conversationName!!, conversationId!!, IMAGE_MESSAGE, realPath) {
+
+                }
+            }
         }
     }
 

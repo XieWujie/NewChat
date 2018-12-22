@@ -3,7 +3,10 @@ package com.example.administrator.newchat
 import android.content.Context
 import com.avos.avoscloud.AVException
 import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.example.administrator.newchat.core.*
+import com.example.administrator.newchat.custom.VerifyMessage
 import com.example.administrator.newchat.data.AppDatabase
 import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.data.contacts.ContactRespository
@@ -11,7 +14,10 @@ import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.data.message.MessageRepository
 import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.data.user.UserRepository
-import com.example.administrator.newchat.utilities.IMAGE_MESSAGE
+import com.example.administrator.newchat.utilities.SENDING
+import com.example.administrator.newchat.utilities.TempCountGet
+import com.example.administrator.newchat.utilities.VERIFY_MESSAGE
+import java.util.*
 
 
 object CoreChat{
@@ -23,8 +29,10 @@ object CoreChat{
     private var contacts:AbstractContacts? = null
     private var abstractUser:AbstractUser? = null
     private var abstractMessage:AbstractMessage? = null
+    private var counter:TempCountGet? = null
 
     fun init(context: Context){
+        counter = TempCountGet(context)
         appDatabase = AppDatabase.getInstance(context)
         abstractUser = UserManager(UserRepository.getInstance(appDatabase!!.getUserDao()))
     }
@@ -44,6 +52,8 @@ object CoreChat{
     fun addMessageManage(messageManage: AbstractMessage){
         this.abstractMessage = messageManage
     }
+
+    fun getTempMessageId() = counter?.get()?:"0"
 
     fun loginByPassword(userName:String,password:String,callback: (e:Any) -> Unit){
         check()
@@ -83,6 +93,20 @@ object CoreChat{
         contacts!!.cacheContactByNet()
     }
 
+    fun loginWithoutNet(user: User,loginCallback:()->Unit){
+        owner = user
+        userId = user.userId
+        client = AVIMClient.getInstance(user.userId)
+        init(user, client!!)
+        client!!.open(object :AVIMClientCallback(){
+            override fun done(e: AVIMClient?, p1: AVIMException?) {
+                if (e == null){
+                    loginCallback()
+                }
+            }
+        })
+    }
+
     private fun check(){
         if (abstractUser==null){
             throw Throwable("have not init data")
@@ -95,21 +119,24 @@ object CoreChat{
         abstractUser!!.logout(owner!!)
     }
 
-    fun sendMessage(message:Message){
-        abstractMessage?.sendMessage(message)
+    fun addContact(id:String,markName: String,avatar:String?, addCallback:(e:Exception?)->Unit){
+        contacts?.findConversation(id,markName,avatar){
+            sendMessage(markName,it.conversationId, VERIFY_MESSAGE, VerifyMessage.REQUEST,addCallback)
+        }
     }
 
-    fun sendImage(path:String,conversationId: String,conversationName:String){
-        val message = Message("",conversationId,path,conversationName, IMAGE_MESSAGE, userId!!,1,0,CoreChat.userId!!,"")
-        abstractMessage?.sendMessage(message)
+    fun sendMessage(name:String,conversationId: String,type:Int,content:String,exception: (e:Exception?)->Unit){
+        val message = Message(getTempMessageId(),conversationId,content,
+            name,type, userId!!,0,Date().time, userId!!, SENDING, owner?.avatar)
+        abstractMessage?.sendMessage(message.copy(id = getTempMessageId()),exception)
     }
 
     fun cacheMessage(message: Message){
         abstractMessage?.cacheMessage(message)
     }
 
-    fun queryMessageByConversationId(id:String){
-        abstractMessage?.queryMessageByConversationId(id)
+    fun queryMessageByConversationId(id:String,limit:Int){
+        abstractMessage?.queryMessageByConversationId(id,limit)
     }
 
     fun queryMessageByTime(id: String,timeStamp:Long){
@@ -128,7 +155,8 @@ object CoreChat{
         contacts?.addContactById(id,markName)
     }
 
-    fun addContactById(id:String,markName:String,conversationId: String){
-        contacts?.addContactById(id,markName,conversationId)
+    fun deleteMessage(message: Message){
+        abstractMessage?.deleteMessage(message)
     }
+
 }

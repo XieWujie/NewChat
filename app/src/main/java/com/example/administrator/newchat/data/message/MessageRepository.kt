@@ -1,6 +1,5 @@
 package com.example.administrator.newchat.data.message
 
-import android.util.Log
 import com.example.administrator.newchat.utilities.runOnNewThread
 
 class MessageRepository private constructor(private val messageDao: MessageDao){
@@ -16,6 +15,12 @@ class MessageRepository private constructor(private val messageDao: MessageDao){
     fun insert(messages:List<Message>){
         runOnNewThread {
             messageDao.insert(messages)
+        }
+    }
+
+    fun delete(message: Message){
+        runOnNewThread {
+            messageDao.delete(message)
         }
     }
 

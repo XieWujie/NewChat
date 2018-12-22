@@ -75,7 +75,7 @@ class ContactsManage(private val respository: ContactRespository,
         }
     }
 
-    private fun findConversation(id:String,name:String,avatar:String?,callback: (conversation: AVIMConversation) -> Unit){
+    override fun findConversation(id:String,name:String,avatar:String?,callback: (conversation: AVIMConversation) -> Unit){
         client.createConversation(listOf(id),"好友",null,false,true,object :AVIMConversationCreatedCallback(){
             override fun done(c: AVIMConversation?, e: AVIMException?) {
                 if (e == null && c!=null) {

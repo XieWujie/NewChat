@@ -1,12 +1,9 @@
 package com.example.administrator.newchat.view
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.example.administrator.newchat.R
@@ -25,6 +22,15 @@ class ChatActivity : AppCompatActivity() {
         chatFragment = supportFragmentManager.findFragmentById(R.id.chat_fragment) as ChatFragment
         setSupportActionBar(binding.toolbar)
         setStatusBar()
+        val conversationId = intent.getStringExtra(CONVERSATION_ID)
+        val conversationName = intent.getStringExtra(CONVERSATION__NAME)
+        chatFragment.begin(conversationId,conversationName)
+        setTitle(conversationName)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        finish()
     }
 
 
@@ -35,12 +41,5 @@ class ChatActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = Color.parseColor("#ff5CACFC")
         }
-    }
-    override fun onStart() {
-        super.onStart()
-        val conversationId = intent.getStringExtra(CONVERSATION_ID)
-        val conversationName = intent.getStringExtra(CONVERSATION__NAME)
-        chatFragment.begin(conversationId,conversationName)
-        setTitle(conversationName)
     }
 }

@@ -1,10 +1,7 @@
 package com.example.administrator.newchat.data.message
 
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.administrator.newchat.utilities.VERIFY_MESSAGE
 
 
@@ -22,4 +19,7 @@ interface MessageDao{
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(messages:List<Message>)
+
+    @Delete
+    fun delete(message: Message)
 }

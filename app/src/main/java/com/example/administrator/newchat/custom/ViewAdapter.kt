@@ -34,5 +34,13 @@ class ViewAdapter{
             val s = f.format(d)
             view.text = s
         }
+
+        @JvmStatic
+        @BindingAdapter("unReadCount")
+        fun setUnReadCount(view: TextView,count:Int){
+            if (count>0) {
+                view.text = count.toString()
+            }
+        }
     }
 }
