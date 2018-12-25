@@ -26,7 +26,7 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
                         }
                         VerifyMessage.REQUEST->{
                             binding.contentText.text = "请求添加好友"
-                            if (any.unReadCount<0) {
+                            if (any.unReadCount>0) {
                                 binding.root.setOnClickListener {
                                     createAddContactDialog(any, binding.root.context)
                                 }
@@ -41,6 +41,7 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
                 val intent = Intent(context,ChatActivity::class.java)
                 intent.putExtra(CONVERSATION_ID,any.conversationId)
                 intent.putExtra(CONVERSATION__NAME,any.name)
+                intent.putExtra(AVATAR,any.avatar)
                 context.startActivity(intent)
             }
         }

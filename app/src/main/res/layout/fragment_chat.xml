@@ -9,6 +9,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
                                                            android:layout_alignParentTop="true"
                                                            android:id="@+id/fresh_layout"
+                                                           android:background="#ffebebeb"
                                                            android:layout_above="@id/chat_bottom"
                                                            android:layout_height="500dp">
     <androidx.recyclerview.widget.RecyclerView

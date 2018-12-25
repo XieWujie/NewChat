@@ -23,7 +23,6 @@ class App:Application(){
         PushService.setAutoWakeUp(true)
         PushService.setDefaultChannelId(this, "default")
         AVIMMessageManager.registerDefaultMessageHandler(MessageHandler())
-        AVIMClient.setMessageQueryCacheEnable(false)
         AVIMMessageManager.registerAVIMMessageType(VerifyMessage::class.java)
         CoreChat.init(this)
         AVIMClient.setClientEventHandler(object :AVIMClientEventHandler(){

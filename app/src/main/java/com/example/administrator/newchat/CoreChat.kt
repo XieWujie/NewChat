@@ -1,8 +1,8 @@
 package com.example.administrator.newchat
 
 import android.content.Context
-import com.avos.avoscloud.AVException
 import com.avos.avoscloud.im.v2.AVIMClient
+import com.avos.avoscloud.im.v2.AVIMConversation
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
 import com.example.administrator.newchat.core.*
@@ -107,6 +107,10 @@ object CoreChat{
         })
     }
 
+    fun findConversation(name: String,conversationId: String,avatar: String?,findCallback:(c:AVIMConversation)->Unit){
+        contacts?.findConversation(conversationId,name,avatar,findCallback)
+    }
+
     private fun check(){
         if (abstractUser==null){
             throw Throwable("have not init data")
@@ -159,4 +163,9 @@ object CoreChat{
         abstractMessage?.deleteMessage(message)
     }
 
+    fun sendMessage(message:Message){
+        abstractMessage?.sendMessage(message){
+
+        }
+    }
 }

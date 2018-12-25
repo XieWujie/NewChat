@@ -6,11 +6,9 @@ const val APP_ID = "i2TacWout59nxbKyt0NawBHJ-gzGzoHsz"
 
 const val APP_KEY = "kxp8G4U9vux2zuv68rrm2sV3"
 
-const val USRE = "user"
 
 const val USER_NAME = "username"
 
-const val PASSWORD = "password"
 
 //table name
 const val CONTACT = "contact"
@@ -23,7 +21,9 @@ const val TEXT_MESSAGE = -1
 
 const val IMAGE_MESSAGE = -2
 
-const val UNKNOW_TYPE = -3
+const val UNKNOW_TYPE = -4
+
+const val VOICE_MESSAGE = -3
 
 const val VERIFY_MESSAGE = -10
 

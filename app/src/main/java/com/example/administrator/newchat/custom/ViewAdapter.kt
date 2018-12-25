@@ -25,11 +25,10 @@ class ViewAdapter{
                     .into(view)
             }
         }
-        const val cn = 8*3600000
         @JvmStatic
         @BindingAdapter("time")
         fun setTime(view: TextView,timeStamp:Long){
-            val d = Date(timeStamp+ cn)
+            val d = Date(timeStamp)
             val f = SimpleDateFormat("dd日 HH:mm:ss")
             val s = f.format(d)
             view.text = s

@@ -44,8 +44,10 @@
 
                 <ImageView
                         android:id="@+id/chat_right_tv_error"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:visibility="gone"
                         android:src="@drawable/chat_resend_bg"/>
             </FrameLayout>
             <ImageView
@@ -55,15 +57,16 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="10dp"/>
 
-            <ImageView
+            <TextView
                     android:id="@+id/chat_right_layout_content"
                     android:layout_width="wrap_content"
-                    imageSrc="@{message.message}"
+                    android:background="@drawable/right_bg"
                     android:gravity="center"
+                    android:textColor="#000000"
+                    android:textSize="15sp"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/chat_right_iv_avatar"
-                    android:paddingLeft="40dp">
-            </ImageView>
+                    android:layout_toLeftOf="@+id/chat_right_iv_avatar">
+            </TextView>
 
         </RelativeLayout>
 

@@ -11,16 +11,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.avos.sns.SNS
 import com.avos.sns.SNSType
-import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
-import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.databinding.LogInLayoutBinding
 import com.example.administrator.newchat.utilities.LogInHelper
-import com.example.administrator.newchat.utilities.PASSWORD
-import com.example.administrator.newchat.utilities.USER_NAME
 import com.example.administrator.newchat.utilities.ViewModelFactoryUtil
 import com.example.administrator.newchat.viewmodel.MainModel
-import com.google.android.material.snackbar.Snackbar
 import java.lang.ref.WeakReference
 
 class LoginFragment:Fragment(){

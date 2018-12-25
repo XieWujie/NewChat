@@ -3,9 +3,11 @@ package com.example.administrator.newchat.core
 import com.avos.avoscloud.im.v2.*
 import com.avos.avoscloud.im.v2.messages.AVIMImageMessage
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage
+import com.avos.avoscloud.im.v2.messages.AVIMVideoMessage
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.custom.VerifyMessage
 import com.example.administrator.newchat.custom.getKey
+import com.example.administrator.newchat.data.cache.DownloadUtil
 import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.utilities.*
@@ -17,9 +19,13 @@ class MessageHandler:AVIMMessageHandler(){
             is AVIMTextMessage -> cacheTextMessage(message, conversation!!)
             is AVIMImageMessage -> cacheImageMessage(message, conversation!!)
             is VerifyMessage->handlerVerifyMessage(message,conversation!!)
+            is AVIMVideoMessage->handlerVoiceMessage(message,conversation!!)
         }
     }
 
+    private fun handlerVoiceMessage(m:AVIMVideoMessage,c:AVIMConversation){
+        cacheMessage(m,c,m.localFilePath?:m.fileUrl, VOICE_MESSAGE)
+    }
     private fun handlerVerifyMessage(m:VerifyMessage,c:AVIMConversation){
         val owner = CoreChat.owner!!
         val map = c["Info"] as Map<String,String>

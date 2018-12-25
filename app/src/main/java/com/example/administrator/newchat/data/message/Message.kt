@@ -17,4 +17,6 @@ data class Message(
     val owner:String,
     val sendState:Int,
     val avatar:String?
-)
+){
+
+}

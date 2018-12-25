@@ -1,3 +1,4 @@
+
 package com.example.administrator.newchat.view
 
 
@@ -19,18 +20,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avos.avoscloud.im.v2.AVIMConversation
 import com.example.administrator.newchat.CoreChat
 
 import com.example.administrator.newchat.adapter.ChatAdapter
 import com.example.administrator.newchat.custom.BottomInput
-import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.databinding.FragmentChatBinding
 import com.example.administrator.newchat.utilities.*
 import com.example.administrator.newchat.viewmodel.MessageModel
 import com.google.android.material.snackbar.Snackbar
-import java.lang.RuntimeException
-import java.util.*
-
 
 class ChatFragment : Fragment() {
 
@@ -39,6 +37,7 @@ class ChatFragment : Fragment() {
     private val adapter = ChatAdapter()
     private var conversationName:String? = null
     private var conversationId:String? = null
+    private var conversation:AVIMConversation? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,40 +54,45 @@ class ChatFragment : Fragment() {
         binding.chatRcView.adapter = adapter
     }
 
-   fun begin(id:String,conversationName:String){
-       this.conversationId = id
-       this.conversationName = conversationName
-       binding.chatBottom.init(id,conversationName)
-       binding.chatBottom.setBottomInputListener(object :BottomInput.BottomInputListener{
-           override fun onClick(type: Int) {
-               dispatchEvent(type)
-           }
-       })
-       CoreChat.queryMessageByConversationId(id,20)
-       model.getMessage(id).observe(this, Observer {
-           adapter.submitList(it)
-       })
-       adapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
+    fun begin(id:String,conversationName:String,avatar:String?){
+        this.conversationId = id
+        this.conversationName = conversationName
+        CoreChat.findConversation(conversationName,id,avatar){
+            this.conversation = it
+            it.read()
+        }
+        binding.chatBottom.init(id,conversationName)
+        binding.chatBottom.setBottomInputListener(object :BottomInput.BottomInputListener{
+            override fun onClick(type: Int) {
+                dispatchEvent(type)
+            }
+        })
+        CoreChat.queryMessageByConversationId(id,20)
+        model.getMessage(id).observe(this, Observer {
+            adapter.submitList(it)
+        })
+        adapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
 
-           override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-               super.onItemRangeInserted(positionStart, itemCount)
-               binding.chatRcView.scrollToPosition(adapter.itemCount-1)
-           }
-       })
-       binding.freshLayout.setOnRefreshListener{
-           val message = if (adapter.currentList?.size?:0>0){
-               adapter?.currentList?.get(0)
-           }else{
-               null
-           }
-           if (message!=null){
-               CoreChat.queryMessageByTime(message.id,message.createAt)
-           }else{
-               CoreChat.queryMessageByConversationId(id,20)
-           }
-           binding.freshLayout.isRefreshing = false
-       }
-   }
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                binding.chatRcView.scrollToPosition(adapter.itemCount-1)
+                conversation?.read()
+            }
+        })
+        binding.freshLayout.setOnRefreshListener{
+            val message = if (adapter.currentList?.size?:0>0){
+                adapter?.currentList?.get(0)
+            }else{
+                null
+            }
+            if (message!=null){
+                CoreChat.queryMessageByTime(message.id,message.createAt)
+            }else{
+                CoreChat.queryMessageByConversationId(id,20)
+            }
+            binding.freshLayout.isRefreshing = false
+        }
+    }
 
     fun dispatchEvent(type: Int){
         when(type){
@@ -134,8 +138,7 @@ class ChatFragment : Fragment() {
         startActivityForResult(photoPickerIntent, BottomInput.TYPE_IMAGE)
     }
 
-   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         if (Activity.RESULT_OK == resultCode) {
             when (requestCode) {
                 BottomInput.TYPE_IMAGE -> sendImageMessage(data.data)

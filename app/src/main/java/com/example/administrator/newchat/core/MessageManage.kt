@@ -5,6 +5,7 @@ import com.avos.avoscloud.im.v2.*
 import com.avos.avoscloud.im.v2.callback.*
 import com.avos.avoscloud.im.v2.messages.AVIMImageMessage
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage
+import com.avos.avoscloud.im.v2.messages.AVIMVideoMessage
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.custom.H
 import com.example.administrator.newchat.custom.VerifyMessage
@@ -33,11 +34,15 @@ class MessageManage(
 
 
     override fun sendMessage(message: Message,e:(e:Exception?)->Unit) {
+        if (message.sendState == SENDING){
+            repository.insert(message)
+        }
         getConversation(message.conversationId) {
            when(message.type){
                TEXT_MESSAGE ->sendTextMessage(it,message,e)
                IMAGE_MESSAGE ->sendImageMessage(it,message,e)
                VERIFY_MESSAGE->sendVerifyMessage(it,message.message,e)
+               VOICE_MESSAGE->sendVoiceMessage(it,message,e)
            }
         }
     }
@@ -87,15 +92,23 @@ class MessageManage(
         val m = AVIMTextMessage()
         m.text = message.message
         checkConversation(conversation) {
+            if (it !=null){
+                val message = message.copy(sendState = SEND_FAIL)
+                repository.insert(message)
+                exeption(it)
+                return@checkConversation
+            }
             conversation.sendMessage(m, avimMessageOption, object : AVIMConversationCallback() {
                 override fun done(e: AVIMException?) {
-                    if (e == null) {
-                        val new = message.copy(id = m.messageId, createAt = m.timestamp)
-                        repository.insert(new)
+                    if (e == null){
+                        repository.delete(message)
+                        val m = message.copy(id = m.messageId,createAt = m.timestamp,sendState = SEND_SUCCEED)
+                        repository.insert(m)
                         conversation.read()
                         exeption(e)
-                    } else {
-                        e.printStackTrace()
+                    }else{
+                        val message = message.copy(sendState = SEND_FAIL)
+                        repository.insert(message)
                         exeption(e)
                     }
                 }
@@ -104,7 +117,7 @@ class MessageManage(
 
     }
 
-    private fun checkConversation(c: AVIMConversation,checkCallback:()->Unit){
+    private fun checkConversation(c: AVIMConversation,checkCallback:(e:Exception?)->Unit){
         val map = c["Info"] as Map<String,String?>
         val id = owner.userId
         val key = getKey(id, AVATAR)
@@ -117,31 +130,46 @@ class MessageManage(
             c["Info"] = hashMap.toMap()
             Log.d("map-h",hashMap.toString())
             c.updateInfoInBackground(object :AVIMConversationCallback(){
-                override fun done(p0: AVIMException?) {
-                    if (p0 == null){
-                        checkCallback()
-                    }else{
-                        p0.printStackTrace()
-                    }
+                override fun done(e: AVIMException?) {
+                    checkCallback(e)
                 }
             })
         }else{
-            checkCallback()
+            checkCallback(null)
         }
     }
 
     private fun sendImageMessage(conversation: AVIMConversation,message: Message,exeption:(e:Exception?)->Unit){
-        repository.insert(message)
         val imageMessage = AVIMImageMessage(message.message)
         conversation.sendMessage(imageMessage,avimMessageOption,object :AVIMConversationCallback(){
             override fun done(e: AVIMException?) {
                 if (e == null){
-                    val message = message.copy(id = imageMessage.messageId,createAt = imageMessage.timestamp,sendState = SEND_SUCCEED)
-                    repository.insert(message)
+                    repository.delete(message)
+                    val m = message.copy(id = imageMessage.messageId,createAt = imageMessage.timestamp,sendState = SEND_SUCCEED)
+                    repository.insert(m)
                     conversation.read()
                     exeption(e)
                 }else{
-                    val message = message.copy(id = imageMessage.messageId?:message.id,sendState = SEND_FAIL)
+                    val message = message.copy(sendState = SEND_FAIL)
+                    repository.insert(message)
+                    exeption(e)
+                }
+            }
+        })
+    }
+
+    private fun sendVoiceMessage(conversation: AVIMConversation,message: Message,exeption:(e:Exception?)->Unit){
+        val voiceMessage = AVIMVideoMessage(message.message)
+        conversation.sendMessage(voiceMessage,avimMessageOption,object :AVIMConversationCallback(){
+            override fun done(e: AVIMException?) {
+                if (e == null){
+                    repository.delete(message)
+                    val m = message.copy(id = voiceMessage.messageId,createAt = voiceMessage.timestamp,sendState = SEND_SUCCEED)
+                    repository.insert(m)
+                    conversation.read()
+                    exeption(e)
+                }else{
+                    val message = message.copy(sendState = SEND_FAIL)
                     repository.insert(message)
                     exeption(e)
                 }
@@ -230,6 +258,9 @@ class MessageManage(
                         Message(
                             it.messageId,conId, it.type,name, VERIFY_MESSAGE, it.from, unReadCount, it.timestamp,ownerId, SEND_SUCCEED,avatar
                         )
+                    }
+                    is AVIMVideoMessage->{
+                        Message(it.messageId,conId,it.localFilePath?:it.fileUrl,name, VOICE_MESSAGE,from,0,it.timestamp, owner.userId, SEND_SUCCEED,avatar)
                     }
                     else->{
                         Message(it.messageId,conId,it.content,name, UNKNOW_TYPE,from,0,it.timestamp, owner.userId, SEND_SUCCEED,avatar)

@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             val window = this.window
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.parseColor("#ff5CACFC")
+            window.statusBarColor = Color.parseColor("#ff303030")
             window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN  or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
             binding.drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
             binding.drawerLayout.fitsSystemWindows = true

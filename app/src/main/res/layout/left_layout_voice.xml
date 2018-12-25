@@ -42,6 +42,7 @@
             />
             <TextView android:layout_width="wrap_content"
                       android:text="@{message.message}"
+                      android:id="@+id/voice_text"
                       android:textSize="15sp"
                       android:textColor="#000000"
                       android:gravity="center"

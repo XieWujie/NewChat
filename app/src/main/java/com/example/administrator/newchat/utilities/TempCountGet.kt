@@ -1,7 +1,6 @@
 package com.example.administrator.newchat.utilities
 
 import android.content.Context
-import android.content.SharedPreferences
 
 class TempCountGet(context: Context){
 
@@ -15,7 +14,8 @@ class TempCountGet(context: Context){
         begin = preferences.getInt(key,0)
     }
     fun get():String{
-        val newValue = begin+1
+        val newValue = preferences.getInt(key,begin+1)
+        begin = newValue
         editor.putInt(key,newValue)
         return newValue.toString()
     }
