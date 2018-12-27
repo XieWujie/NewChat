@@ -20,6 +20,7 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
             when(any.type){
                 IMAGE_MESSAGE ->t.text = "图片"
                 TEXT_MESSAGE ->t.text = any.message
+                VOICE_MESSAGE->t.text = "语音"
                 VERIFY_MESSAGE->{
                     when(any.message){
                         VerifyMessage.AGREE->{
@@ -46,6 +47,15 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
                 val newMessage = any.copy(unReadCount = 0)
                 CoreChat.cacheMessage(newMessage,false)
                 context.startActivity(intent)
+            }
+            binding.root.setOnLongClickListener {
+                val dialog =  AlertDialog.Builder(binding.root.context)
+                    .setItems(arrayOf("删除消息")){ d,positon->
+                        when(positon){
+                            0->CoreChat.deleteMessage(any.conversationId)
+                        }
+                    }.show()
+                true
             }
         }
     }

@@ -11,6 +11,7 @@ import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberQueryCallback
 import com.avos.avoscloud.im.v2.conversation.AVIMConversationMemberInfo
 import com.example.administrator.newchat.CoreChat
+import com.example.administrator.newchat.custom.getKey
 import com.example.administrator.newchat.data.user.User
 
 object ChatUtil{
@@ -64,36 +65,16 @@ object ChatUtil{
     fun findConversationTitle(c:AVIMConversation,fromName:String,findCallback:(title:String)->Unit){
         val ownerName = CoreChat.owner?.name
         if (fromName == ownerName){
-            findConversationMembers(c){
-                if (it!=null){
-                    if (it.size== 2){
-                        it.forEach{
-                            if (it !=ownerName){
-                                findCallback(it)
-                            }
-                        }
-                    }else{
-                        findCallback(c.name)
-                    }
-                }else{
-                    findCallback(fromName)
-                }
+            val m = c["Info"] as Map<String,String?>
+            val name = m[getKey(CoreChat.userId!!, OTHER_NAME)]
+            if (name !=null){
+                findCallback(name)
+            }else{
+                findCallback(fromName)
             }
         }else{
             findCallback(fromName)
         }
     }
 
-    fun findConversationMembers(c:AVIMConversation,findCallback: (list:List<String>?) -> Unit){
-        c.getAllMemberInfo(0,20,object :AVIMConversationMemberQueryCallback(){
-            override fun done(list: MutableList<AVIMConversationMemberInfo>?, e: AVIMException?) {
-                if (e == null && list!=null){
-                    val newList = list.map { it.nickname}
-                    findCallback(newList)
-                }else{
-                    findCallback(null)
-                }
-            }
-        })
-    }
 }

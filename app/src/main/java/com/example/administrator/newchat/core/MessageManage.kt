@@ -293,4 +293,8 @@ class MessageManage(
     override fun deleteMessage(message: Message) {
         repository.delete(message)
     }
+
+    override fun deleteMessages(conversationId: String) {
+        repository.delete(conversationId)
+    }
 }

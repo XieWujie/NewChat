@@ -128,6 +128,10 @@ object CoreChat{
         }
     }
 
+    fun removeContact(contact:Contact){
+        contacts?.removeContact(contact)
+    }
+
     private fun check(){
         if (abstractUser==null){
             throw Throwable("have not init data")
@@ -179,6 +183,10 @@ object CoreChat{
 
     fun addContactById(id:String,markName:String){
         contacts?.addContactById(id,markName)
+    }
+
+    fun deleteMessage(conversationId: String){
+        abstractMessage?.deleteMessages(conversationId)
     }
 
     fun deleteMessage(message: Message){

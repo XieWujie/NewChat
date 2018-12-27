@@ -28,7 +28,7 @@ class AddDialogHelper(val o:AVObject,val  navController: NavController,val dialo
     }
 
     fun cancel(view: View){
-
+        dialog.dismiss()
     }
 
 }

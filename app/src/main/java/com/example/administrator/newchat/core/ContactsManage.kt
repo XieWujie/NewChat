@@ -10,6 +10,7 @@ import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.data.contacts.ContactRespository
 import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.utilities.*
+import java.lang.reflect.Member
 
 
 class ContactsManage(private val respository: ContactRespository,
@@ -25,7 +26,7 @@ class ContactsManage(private val respository: ContactRespository,
 
     override fun addContact(contact: Contact) {
         val o = AVObject.createWithoutData(CONTACT,owner.contactListId)
-        o.add(CONTACTS,contact.toString())
+        o.addUnique(CONTACTS,contact.toString())
         o.saveInBackground()
         respository.addContact(contact)
     }
@@ -84,7 +85,9 @@ class ContactsManage(private val respository: ContactRespository,
                             getKey(owner.userId, USER_NAME) to owner.name,
                             getKey(owner.userId, AVATAR) to owner.avatar,
                             getKey(id, USER_NAME) to name,
-                            getKey(id, AVATAR) to avatar
+                            getKey(id, AVATAR) to avatar,
+                            getKey(owner.userId, OTHER_NAME) to name,
+                            getKey(id, OTHER_NAME) to name
                         )
                         c["Info"] = map
                         c.updateInfoInBackground(object : AVIMConversationCallback() {
@@ -103,7 +106,29 @@ class ContactsManage(private val respository: ContactRespository,
     }
 
     override fun removeContact(contact: Contact) {
-
+        val o = AVObject.createWithoutData(CONTACT,owner.contactListId)
+        o.fetchInBackground(object :GetCallback<AVObject>(){
+            override fun done(obj: AVObject?, e: AVException?) {
+                if (e == null ){
+                  val list =   obj!![CONTACTS]
+                    if (list == null)return
+                    list as List<String>
+                    val l = ArrayList<String>()
+                    val str = contact.toString()
+                    list.forEach {
+                        if (it != str){
+                            l.add(it)
+                        }
+                    }
+                    obj.remove(CONTACTS)
+                    obj.addAllUnique(CONTACTS,l)
+                    obj.saveInBackground()
+                    respository.removeContact(contact)
+                }
+            }
+        })
+        o.saveInBackground()
+        respository.addContact(contact)
     }
 
     override fun markContactName( contactId: String, markName: String) {

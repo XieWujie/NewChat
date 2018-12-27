@@ -1,18 +1,10 @@
 package com.example.administrator.newchat.view
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.NonNull
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +14,6 @@ import com.example.administrator.newchat.custom.RcDecoration
 import com.example.administrator.newchat.databinding.MessageListLayoutBinding
 import com.example.administrator.newchat.utilities.ViewModelFactoryUtil
 import com.example.administrator.newchat.viewmodel.MessageModel
-import com.google.android.material.snackbar.Snackbar
 
 class MessageFragment:BaseFragment(){
 
@@ -44,9 +35,7 @@ class MessageFragment:BaseFragment(){
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(RcDecoration())
         model.newMessage.observe(this, Observer {
-            if (it!=null){
-                adapter.submitList(it)
-            }
+            adapter.submitList(it)
         })
     }
 }

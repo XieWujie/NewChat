@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/messageFragment"
+          android:icon="@drawable/main_message_icon"
           android:title="消息"/>
     <item android:id="@+id/contactFragment"
+          android:icon="@drawable/main_contact_icon"
           android:title="联系人"/>
 </menu>

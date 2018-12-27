@@ -38,6 +38,7 @@ class ChatFragment : Fragment() {
     private var conversationName:String? = null
     private var conversationId:String? = null
     private var conversation:AVIMConversation? = null
+    private var isInited = false
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,21 +66,25 @@ class ChatFragment : Fragment() {
                 dispatchEvent(type)
             }
         })
-        CoreChat.queryMessageByConversationId(id,20)
         model.getMessage(id).observe(this, Observer {
             adapter.submitList(it)
+            if (!isInited&&it.size<10&&conversationId!=null){
+                CoreChat.queryMessageByConversationId(conversationId!!,20)
+                isInited = true
+            }
+
         })
         adapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
 
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
                 binding.chatRcView.scrollToPosition(adapter.itemCount-1)
-                conversation?.read()
+                conversation.read()
             }
         })
         binding.freshLayout.setOnRefreshListener{
             val message = if (adapter.currentList?.size?:0>0){
-                adapter?.currentList?.get(0)
+                adapter.currentList?.get(0)
             }else{
                 null
             }

@@ -24,6 +24,12 @@ class MessageRepository private constructor(private val messageDao: MessageDao){
         }
     }
 
+    fun delete(conversationId:String){
+        runOnNewThread {
+            messageDao.delete(conversationId)
+        }
+    }
+
     fun delete(message: Message){
         runOnNewThread {
             messageDao.delete(message)

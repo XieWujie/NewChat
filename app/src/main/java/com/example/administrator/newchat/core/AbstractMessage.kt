@@ -10,6 +10,8 @@ interface AbstractMessage{
 
     fun cacheMessage(message: Message,isUpdate:Boolean = false)
 
+    fun deleteMessages(conversationId:String)
+
     fun queryMessageByConversationId(id:String,limit:Int)
 
     fun queryMessageByTime(id:String,timeStamp:Long)

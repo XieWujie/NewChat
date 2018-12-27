@@ -13,6 +13,8 @@ const val USER_NAME = "username"
 //table name
 const val CONTACT = "contact"
 
+const val OTHER_NAME = "other_name"
+
 const val CONTACTS = "contacts"
 
 const val CONTACTS_LIST_ID = "contact_list_id"

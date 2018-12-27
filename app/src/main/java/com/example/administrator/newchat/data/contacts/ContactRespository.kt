@@ -13,9 +13,12 @@ class ContactRespository private constructor(private val contactDao: ContactDao)
 
     fun getAllContacts(ownerId:String) = contactDao.getAllContacts(ownerId)
 
-    fun getContacts() = contactDao.getContacts()
 
-    fun getContactId() = contactDao.getContactsId()
+    fun removeContact(contact: Contact){
+        runOnNewThread {
+            contactDao.remove(contact)
+        }
+    }
 
     fun addContacts(list: List<Contact>){
         runOnNewThread {

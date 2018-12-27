@@ -1,21 +1,14 @@
 package com.example.administrator.newchat.view
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
-import com.avos.avoscloud.im.v2.AVIMException
-import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberCountCallback
-import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberQueryCallback
-import com.avos.avoscloud.im.v2.conversation.AVIMConversationMemberInfo
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
-import com.example.administrator.newchat.custom.getKey
 import com.example.administrator.newchat.databinding.ActivityChatBinding
 import com.example.administrator.newchat.utilities.*
 
@@ -38,7 +31,7 @@ class ChatActivity : AppCompatActivity(){
         val conversationName = intent.getStringExtra(CONVERSATION__NAME)
         val avatar = intent.getStringExtra(AVATAR)
         CoreChat.finConversationById(conversationId) { conversation ->
-            ChatUtil.findConversationTitle(conversation,conversationName){
+            ChatUtil.findConversationTitle(conversation, conversationName) {
                 setTitle(it)
                 chatFragment.begin(conversationId, it, avatar, conversation)
             }
@@ -66,8 +59,5 @@ class ChatActivity : AppCompatActivity(){
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = Color.parseColor("#ff303030")
         }
-    }
-    override fun onConfigurationChanged(newConfig: Configuration?) {
-        super.onConfigurationChanged(newConfig)
     }
 }

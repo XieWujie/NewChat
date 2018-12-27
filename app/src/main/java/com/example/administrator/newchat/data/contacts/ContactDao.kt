@@ -2,10 +2,8 @@ package com.example.administrator.newchat.data.contacts
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import com.example.administrator.newchat.utilities.runOnNewThread
 
 @Dao
 interface ContactDao{
@@ -18,6 +16,9 @@ interface ContactDao{
 
     @Query("SELECT * FROM contact")
     fun getContacts():List<Contact>
+
+    @Delete
+    fun remove(contact: Contact)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addContacts(list:List<Contact>)

@@ -1,6 +1,9 @@
 package com.example.administrator.newchat.adapter
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.databinding.ContactRcItemBinding
 import com.example.administrator.newchat.utilities.AVATAR
@@ -20,6 +23,15 @@ class ContactHolder(val bind:ContactRcItemBinding):BaseHolder(bind.root){
                 intent.putExtra(CONVERSATION__NAME,any.name)
                 intent.putExtra(AVATAR,any.avatar)
                 it.context.startActivity(intent)
+            }
+            bind.root.setOnLongClickListener {
+               val dialog =  AlertDialog.Builder(bind.root.context)
+                    .setItems(arrayOf("删除联系人")){ d,positon->
+                        when(positon){
+                            0->CoreChat.removeContact(any)
+                        }
+                    }.show()
+                true
             }
         }
     }

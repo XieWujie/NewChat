@@ -42,10 +42,6 @@ class MainDrawFragment : Fragment() {
     }
 
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity as Activity,
@@ -60,7 +56,7 @@ class MainDrawFragment : Fragment() {
             when (requestCode) {
                 BottomInput.TYPE_IMAGE ->dispatchPictureIntent()
             }
-        } else {
+        }else {
             Snackbar.make(bind.root, "拒绝权限将不能正常使用该功能", Snackbar.LENGTH_LONG).show()
         }
     }

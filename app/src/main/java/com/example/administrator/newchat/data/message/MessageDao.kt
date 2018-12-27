@@ -25,4 +25,7 @@ interface MessageDao{
 
     @Update
     fun update(message: Message)
+
+    @Query("DELETE FROM message WHERE conversationId = :conversationId")
+    fun delete(conversationId:String)
 }
