@@ -1,5 +1,4 @@
 package com.example.administrator.newchat.data.cache;
-
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -98,7 +97,7 @@ public class LocalCacheUtil {
      * @param callback  下载完后的回调
      */
     public static void downloadFile(final String url, final String localPath,
-                                    boolean overlay, final DownLoadCallback callback) {
+    boolean overlay, final DownLoadCallback callback) {
         if (TextUtils.isEmpty(url) || TextUtils.isEmpty(localPath)) {
             throw new IllegalArgumentException("url or localPath can not be null");
         } else if (!overlay && isFileExist(localPath)) {
@@ -111,8 +110,8 @@ public class LocalCacheUtil {
                 new AsyncTask<Void, Void, Exception>() {
                     @Override
                     protected Exception doInBackground(Void... params) {
-                        return downloadWithOKHttp(url, localPath);
-                    }
+                    return downloadWithOKHttp(url, localPath);
+                }
 
                     @Override
                     protected void onPostExecute(Exception e) {

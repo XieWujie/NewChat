@@ -75,14 +75,13 @@ class RecordText:TextView{
             recordOperation()
         }else{
             if (context is Activity){
-                ActivityCompat.requestPermissions(context as Activity, arrayOf( Manifest.permission.RECORD_AUDIO,Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
+                ActivityCompat.requestPermissions(context as Activity, arrayOf( Manifest.permission.RECORD_AUDIO),1)
             }
         }
     }
 
     private fun isHavePermission() =
-        (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(context,Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED)
+        (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)
 
 
     /**
@@ -144,12 +143,12 @@ class RecordText:TextView{
      */
     private fun stopRecord() {
         endTime = System.currentTimeMillis()
-        val time = (endTime - startTime) / 1000
-        if (time >= 1) {
+        val time = (endTime - startTime)/1000.0
+        if (time >= 0.2) {
             if (mAudioFile!=null){
                 mMediaRecorder?.stop()
-                vibrator.vibrate(100)
-                sendVoiceMessage(mAudioFile!!.absolutePath)
+                vibrator.vibrate(50)
+                sendVoiceMessage(mAudioFile!!.absolutePath,time)
             }
         } else {
             mAudioFile = null
@@ -167,9 +166,9 @@ class RecordText:TextView{
         mMediaRecorder?.release()
     }
 
-    private fun sendVoiceMessage(path:String?){
+    private fun sendVoiceMessage(path:String?,time:Double){
         if (id!=null && name!=null&&path!=null){
-            CoreChat.sendMessage(name!!,id!!, VOICE_MESSAGE,path){
+            CoreChat.sendMessage(name!!,id!!, VOICE_MESSAGE,path,time.toDouble()){
 
             }
         }

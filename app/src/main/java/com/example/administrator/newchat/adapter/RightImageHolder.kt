@@ -66,5 +66,8 @@ class RightImageHolder(val bind:RightLayoutImageBinding):BaseHolder(bind.root){
         layoutParams?.height = displayMetrics.heightPixels
         window?.attributes = layoutParams
         dialog.show()
+        view.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 }

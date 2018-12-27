@@ -6,6 +6,12 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.avos.avoscloud.im.v2.AVIMConversation
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberQueryCallback
+import com.avos.avoscloud.im.v2.conversation.AVIMConversationMemberInfo
+import com.example.administrator.newchat.CoreChat
+import com.example.administrator.newchat.data.user.User
 
 object ChatUtil{
     fun getRealPathFromURI(context: Context, contentUri: Uri): String? {
@@ -53,5 +59,41 @@ object ChatUtil{
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
+    }
+
+    fun findConversationTitle(c:AVIMConversation,fromName:String,findCallback:(title:String)->Unit){
+        val ownerName = CoreChat.owner?.name
+        if (fromName == ownerName){
+            findConversationMembers(c){
+                if (it!=null){
+                    if (it.size== 2){
+                        it.forEach{
+                            if (it !=ownerName){
+                                findCallback(it)
+                            }
+                        }
+                    }else{
+                        findCallback(c.name)
+                    }
+                }else{
+                    findCallback(fromName)
+                }
+            }
+        }else{
+            findCallback(fromName)
+        }
+    }
+
+    fun findConversationMembers(c:AVIMConversation,findCallback: (list:List<String>?) -> Unit){
+        c.getAllMemberInfo(0,20,object :AVIMConversationMemberQueryCallback(){
+            override fun done(list: MutableList<AVIMConversationMemberInfo>?, e: AVIMException?) {
+                if (e == null && list!=null){
+                    val newList = list.map { it.nickname}
+                    findCallback(newList)
+                }else{
+                    findCallback(null)
+                }
+            }
+        })
     }
 }

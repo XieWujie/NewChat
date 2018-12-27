@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.data.cache.LocalCacheUtil
 import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.databinding.RightVoiceLayoutBinding
@@ -18,6 +19,25 @@ class RightVoiceHolder(val bind:RightVoiceLayoutBinding):BaseHolder(bind.root){
 
     override fun bind(any: Any) {
         if (any is Message){
+            when(any.sendState){
+                SENDING->{
+                    bind.chatRightProgressbar.visibility = View.VISIBLE
+                    bind.chatRightTvError.visibility = View.GONE
+                }
+                SEND_FAIL->{
+                    bind.chatRightProgressbar.visibility = View.GONE
+                    bind.chatRightTvError.visibility = View.VISIBLE
+                    bind.chatRightTvError.setOnClickListener {
+                        resendEvent(any)
+                        it.visibility = View.GONE
+                        bind.chatRightProgressbar.visibility = View.VISIBLE
+                    }
+                }
+                SEND_SUCCEED->{
+                    bind.chatRightProgressbar.visibility = View.GONE
+                    bind.chatRightTvError.visibility = View.GONE
+                }
+            }
             bind.message = any
             var path :String?
             if (any.message.contains("http")){
@@ -34,6 +54,10 @@ class RightVoiceHolder(val bind:RightVoiceLayoutBinding):BaseHolder(bind.root){
                 begin(any.message)
             }
         }
+    }
+
+    private fun resendEvent(message: Message){
+        CoreChat.sendMessage(message)
     }
 
     private fun begin(path:String){

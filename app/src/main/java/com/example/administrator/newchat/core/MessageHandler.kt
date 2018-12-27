@@ -24,22 +24,19 @@ class MessageHandler:AVIMMessageHandler(){
     }
 
     private fun handlerVoiceMessage(m:AVIMVideoMessage,c:AVIMConversation){
-        cacheMessage(m,c,m.localFilePath?:m.fileUrl, VOICE_MESSAGE)
+        cacheMessage(m,c,m.localFilePath?:m.fileUrl, VOICE_MESSAGE,m.duration)
     }
     private fun handlerVerifyMessage(m:VerifyMessage,c:AVIMConversation){
-        val owner = CoreChat.owner!!
-        val map = c["Info"] as Map<String,String>
-        val id = m.from
-        val name = map[getKey(id, USER_NAME)] as String
-        val avatar = map[getKey(id, AVATAR)]
         when(m.type){
             VerifyMessage.REQUEST->{
-                val message = Message(m.messageId,c.conversationId,VerifyMessage.REQUEST,name,
-                    VERIFY_MESSAGE, m.from,c.unreadMessagesCount,m.timestamp,CoreChat.userId!!, SENDING ,avatar)
-                CoreChat.cacheMessage(message)
+                cacheMessage(m,c,VerifyMessage.REQUEST, VERIFY_MESSAGE)
             }
-
             VerifyMessage.AGREE->{
+                val owner = CoreChat.owner!!
+                val map = c["Info"] as Map<String,String>
+                val id = m.from
+                val name = map[getKey(id, USER_NAME)] as String
+                val avatar = map[getKey(id, AVATAR)]
                 val ownerId = owner.userId
                 val contact = Contact(id,name,name,c.conversationId,ownerId,avatar)
                 CoreChat.addContact(contact)
@@ -47,13 +44,13 @@ class MessageHandler:AVIMMessageHandler(){
         }
     }
 
-    private fun cacheMessage(m:AVIMMessage,c:AVIMConversation,content:String,type:Int){
+    private fun cacheMessage(m:AVIMMessage,c:AVIMConversation,content:String,type:Int,voiceTime:Double = 0.0){
         val map = c["Info"] as Map<String,String>
         val id = m.from
         val name = map[getKey(id, USER_NAME)] as String
         val avatar = map[getKey(id, AVATAR)]
-        val message = Message(m.messageId,c.conversationId,content,name,
-            type, m.from,c.unreadMessagesCount,m.timestamp,CoreChat.userId!!, SENDING,avatar)
+        val message = Message(m.messageId,c.conversationId,name,content,name,id,
+            type,voiceTime, c.unreadMessagesCount,m.timestamp,CoreChat.userId!!, SENDING,avatar)
         CoreChat.cacheMessage(message)
     }
 

@@ -1,5 +1,6 @@
 package com.example.administrator.newchat.adapter
 
+import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -30,7 +31,6 @@ class LeftVoiceHolder(val bind:LeftLayoutVoiceBinding):BaseHolder(bind.root){
                     override fun done(e: Exception?) {
                         if (e == null){
                             begin(path!!)
-                            Log.d("localpath",path!!)
                         }
                     }
                 })

@@ -38,9 +38,9 @@ class ChatAdapter:PagedListAdapter<Message,BaseHolder>(MessageDiffCallBack()){
     override fun getItemViewType(position: Int): Int {
         return getItem(position)!!.let {
             when(it.type){
-                TEXT_MESSAGE, VERIFY_MESSAGE ->if (it.from == CoreChat.userId!!) TYPE_TEXT_RIGHT else TYPE_TEXT_LEFT
-                IMAGE_MESSAGE ->if (it.from == CoreChat.userId!!) TYPE_IMAGE_RIGHT else TYPE_IMAGE_LEFT
-                VOICE_MESSAGE->if (it.from == CoreChat.userId!!) TYPE_VOICE_RIGHT else TYPE_VOICE_LEFT
+                TEXT_MESSAGE, VERIFY_MESSAGE ->if (it.fromId == CoreChat.userId!!) TYPE_TEXT_RIGHT else TYPE_TEXT_LEFT
+                IMAGE_MESSAGE ->if (it.fromId == CoreChat.userId!!) TYPE_IMAGE_RIGHT else TYPE_IMAGE_LEFT
+                VOICE_MESSAGE->if (it.fromId == CoreChat.userId!!) TYPE_VOICE_RIGHT else TYPE_VOICE_LEFT
                 else ->throw Throwable("have not find this type")
         }
         }

@@ -54,13 +54,11 @@ class ChatFragment : Fragment() {
         binding.chatRcView.adapter = adapter
     }
 
-    fun begin(id:String,conversationName:String,avatar:String?){
+    fun begin(id:String,conversationName:String,avatar:String?,conversation:AVIMConversation){
         this.conversationId = id
         this.conversationName = conversationName
-        CoreChat.findConversation(conversationName,id,avatar){
-            this.conversation = it
-            it.read()
-        }
+        this.conversation = conversation
+        conversation.read()
         binding.chatBottom.init(id,conversationName)
         binding.chatBottom.setBottomInputListener(object :BottomInput.BottomInputListener{
             override fun onClick(type: Int) {

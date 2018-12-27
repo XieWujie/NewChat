@@ -1,34 +1,48 @@
 package com.example.administrator.newchat.view
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import com.avos.avoscloud.im.v2.AVIMException
+import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberCountCallback
+import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberQueryCallback
+import com.avos.avoscloud.im.v2.conversation.AVIMConversationMemberInfo
+import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
+import com.example.administrator.newchat.custom.getKey
 import com.example.administrator.newchat.databinding.ActivityChatBinding
-import com.example.administrator.newchat.utilities.AVATAR
-import com.example.administrator.newchat.utilities.CONVERSATION_ID
-import com.example.administrator.newchat.utilities.CONVERSATION__NAME
+import com.example.administrator.newchat.utilities.*
 
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : AppCompatActivity(){
 
     private lateinit var chatFragment: ChatFragment
     private lateinit var binding:ActivityChatBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityChatBinding>(this,R.layout.activity_chat)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_chat)
         chatFragment = supportFragmentManager.findFragmentById(R.id.chat_fragment) as ChatFragment
         initView()
+        initConversation()
+    }
+
+    private fun initConversation(){
         val conversationId = intent.getStringExtra(CONVERSATION_ID)
         val conversationName = intent.getStringExtra(CONVERSATION__NAME)
         val avatar = intent.getStringExtra(AVATAR)
-        chatFragment.begin(conversationId,conversationName,avatar)
-        setTitle(conversationName)
+        CoreChat.finConversationById(conversationId) { conversation ->
+            ChatUtil.findConversationTitle(conversation,conversationName){
+                setTitle(it)
+                chatFragment.begin(conversationId, it, avatar, conversation)
+            }
+        }
     }
 
     private fun initView(){
@@ -37,8 +51,14 @@ class ChatActivity : AppCompatActivity() {
         binding.toolbar.setTitleTextColor(Color.WHITE)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.home_back_icon)
     }
 
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
+    }
     fun setStatusBar() {
         if (Build.VERSION.SDK_INT >= 21) {
             val window = this.window
@@ -47,7 +67,6 @@ class ChatActivity : AppCompatActivity() {
             window.statusBarColor = Color.parseColor("#ff303030")
         }
     }
-
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
     }

@@ -22,4 +22,7 @@ interface MessageDao{
 
     @Delete
     fun delete(message: Message)
+
+    @Update
+    fun update(message: Message)
 }

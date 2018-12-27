@@ -18,6 +18,12 @@ class MessageRepository private constructor(private val messageDao: MessageDao){
         }
     }
 
+    fun update(message: Message){
+        runOnNewThread {
+            messageDao.update(message)
+        }
+    }
+
     fun delete(message: Message){
         runOnNewThread {
             messageDao.delete(message)

@@ -5,6 +5,7 @@ import com.avos.avoscloud.im.v2.AVIMClient
 import com.avos.avoscloud.im.v2.AVIMConversation
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback
+import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback
 import com.example.administrator.newchat.core.*
 import com.example.administrator.newchat.custom.VerifyMessage
 import com.example.administrator.newchat.data.AppDatabase
@@ -111,6 +112,22 @@ object CoreChat{
         contacts?.findConversation(conversationId,name,avatar,findCallback)
     }
 
+    fun finConversationById(conversationId: String,getCallback:(c:AVIMConversation)->Unit){
+       val conversation =  client?.getConversation(conversationId)
+        if (conversation == null)return
+        if (conversation?.isShouldFetch){
+            conversation?.fetchInfoInBackground(object :AVIMConversationCallback(){
+                override fun done(e: AVIMException?) {
+                    if (e == null){
+                        getCallback(conversation)
+                    }
+                }
+            })
+        }else{
+            getCallback(conversation)
+        }
+    }
+
     private fun check(){
         if (abstractUser==null){
             throw Throwable("have not init data")
@@ -130,13 +147,18 @@ object CoreChat{
     }
 
     fun sendMessage(name:String,conversationId: String,type:Int,content:String,exception: (e:Exception?)->Unit){
-        val message = Message(getTempMessageId(),conversationId,content,
-            name,type, userId!!,0,Date().time, userId!!, SENDING, owner?.avatar)
+      sendMessage(name,conversationId,type,content,0.0,exception)
+    }
+
+    fun sendMessage(name:String,conversationId: String,type:Int,content:String,voiceTime:Double,exception: (e:Exception?)->Unit){
+        val ownerName = owner?.name!!
+        val message = Message(getTempMessageId(),conversationId,name,
+            content,ownerName, userId!!,type, voiceTime,0,Date().time, userId!!, SENDING, owner?.avatar)
         abstractMessage?.sendMessage(message.copy(id = getTempMessageId()),exception)
     }
 
-    fun cacheMessage(message: Message){
-        abstractMessage?.cacheMessage(message)
+    fun cacheMessage(message: Message,isUpdate:Boolean = false){
+        abstractMessage?.cacheMessage(message,isUpdate)
     }
 
     fun queryMessageByConversationId(id:String,limit:Int){

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.custom.VerifyMessage
+import com.example.administrator.newchat.data.contacts.Contact
 import com.example.administrator.newchat.data.message.Message
 import com.example.administrator.newchat.databinding.MessageItemLayoutBinding
 import com.example.administrator.newchat.utilities.*
@@ -40,8 +41,10 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
                 val context = binding.root.context
                 val intent = Intent(context,ChatActivity::class.java)
                 intent.putExtra(CONVERSATION_ID,any.conversationId)
-                intent.putExtra(CONVERSATION__NAME,any.name)
+                intent.putExtra(CONVERSATION__NAME,any.conversationName)
                 intent.putExtra(AVATAR,any.avatar)
+                val newMessage = any.copy(unReadCount = 0)
+                CoreChat.cacheMessage(newMessage,false)
                 context.startActivity(intent)
             }
         }
@@ -49,11 +52,12 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
 
     private fun createAddContactDialog(message: Message,context: Context){
         val dialog = AlertDialog.Builder(context)
-            .setTitle("${message.message}\n是否同意？")
+            .setTitle("是否同意？")
             .setPositiveButton("同意"){ a,b->
-                CoreChat.addContactById(message.from,message.name)
-                val message = message.copy(message = VerifyMessage.AGREE.toString())
-                CoreChat.sendMessage(message.name,message.conversationId, VERIFY_MESSAGE,VerifyMessage.AGREE){
+                val contact = Contact(message.fromId,message.fromName,message.fromName,message.conversationId,CoreChat.owner!!.userId,message.avatar)
+                CoreChat.addContact(contact)
+                val message = message.copy(message = VerifyMessage.AGREE)
+                CoreChat.sendMessage(message.fromName,message.conversationId, VERIFY_MESSAGE,VerifyMessage.AGREE){
                     if (it == null){
                         CoreChat.deleteMessage(message)
                     }

@@ -8,7 +8,7 @@ interface AbstractMessage{
 
     fun sendMessage(message:Message,e:(e:Exception?)->Unit)
 
-    fun cacheMessage(message: Message)
+    fun cacheMessage(message: Message,isUpdate:Boolean = false)
 
     fun queryMessageByConversationId(id:String,limit:Int)
 

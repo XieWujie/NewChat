@@ -15,6 +15,7 @@ import com.example.administrator.newchat.data.message.MessageRepository
 import com.example.administrator.newchat.data.user.User
 import com.example.administrator.newchat.utilities.*
 import java.lang.Exception
+import java.util.*
 
 
 class MessageManage(
@@ -177,8 +178,12 @@ class MessageManage(
         })
     }
 
-    override fun cacheMessage(message: Message) {
-        repository.insert(message)
+    override fun cacheMessage(message: Message,isUpdate:Boolean) {
+        if (isUpdate){
+            repository.update(message)
+        }else {
+            repository.insert(message)
+        }
     }
 
 
@@ -241,34 +246,49 @@ class MessageManage(
         val map = conversation["Info"] as Map<String,String?>
         val  name = map[getKey(from, USER_NAME)] ?:""
         val avatar = map[getKey(from, AVATAR)]
+        var type:Int
+        var content:String
+        var voiceTime = 0.0
+        var cName = name
         val list = messages.asReversed()
             .map {
-                when(it){
-                    is AVIMTextMessage->{
-                        Message(
-                            it.messageId,conId, it.text,name, TEXT_MESSAGE, it.from, unReadCount, it.timestamp,ownerId ,SEND_SUCCEED,avatar
-                        )
-                    }
-                    is  AVIMImageMessage->{
-                        Message(
-                            it.messageId,conId, it.fileUrl,name, IMAGE_MESSAGE, it.from, unReadCount, it.timestamp,ownerId,SEND_SUCCEED,avatar
-                        )
-                    }
-                    is VerifyMessage->{
-                        Message(
-                            it.messageId,conId, it.type,name, VERIFY_MESSAGE, it.from, unReadCount, it.timestamp,ownerId, SEND_SUCCEED,avatar
-                        )
-                    }
-                    is AVIMVideoMessage->{
-                        Message(it.messageId,conId,it.localFilePath?:it.fileUrl,name, VOICE_MESSAGE,from,0,it.timestamp, owner.userId, SEND_SUCCEED,avatar)
-                    }
-                    else->{
-                        Message(it.messageId,conId,it.content,name, UNKNOW_TYPE,from,0,it.timestamp, owner.userId, SEND_SUCCEED,avatar)
+                if (it.from == ownerId){
+                    if (it.mentionList?.size ?:0>0){
+                        it.mentionList.forEach {
+                            if (it!=ownerId){
+                                cName = it
+                            }
+                        }
                     }
                 }
+                when(it){
+                    is AVIMTextMessage->{
+                        content = it.text
+                        type = TEXT_MESSAGE
+                    }
+                    is  AVIMImageMessage->{
+                        content = it.fileUrl
+                        type = IMAGE_MESSAGE
+                    }
+                    is VerifyMessage->{
+                       content = it.content
+                        type = VERIFY_MESSAGE
+                    }
+                    is AVIMVideoMessage->{
+                        content = it.fileUrl
+                        type = VOICE_MESSAGE
+                        voiceTime = it.duration
+                    }
+                    else->{
+                        content = it.content
+                        type = UNKNOW_TYPE
+                    }
+                }
+                Message(it.messageId,conId,cName,content,name,it.from,type,voiceTime,unReadCount,it.timestamp,ownerId, SEND_SUCCEED,avatar)
             }.toList()
         convertCallback(list)
     }
+
 
     override fun deleteMessage(message: Message) {
         repository.delete(message)
