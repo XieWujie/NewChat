@@ -1,5 +1,6 @@
-package com.example.administrator.newchat.utilities
+package com.example.administrator.newchat.presenter
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -14,24 +15,37 @@ import com.avos.sns.*
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.data.user.User
+import com.example.administrator.newchat.utilities.ChatUtil
 import com.example.administrator.newchat.view.MainActivity
 import com.google.android.material.snackbar.Snackbar
 import java.lang.ref.WeakReference
 
 
-class LogInHelper(
+class LogInPresenter(
      @Bindable var userName:String,
      @Bindable var password:String
  ):BaseObservable(){
 
+    var progressDialog:Dialog? = null
     var activity:WeakReference<FragmentActivity> ? = null
     fun login(view:View){
+        if (userName.isNullOrBlank()){
+            Snackbar.make(view,"用户名不能为空",Snackbar.LENGTH_LONG).show()
+            return
+        }
+        if (progressDialog == null){
+            progressDialog = ChatUtil.createProgressDialog(view.context)
+        }
+        progressDialog?.show()
+        view.isClickable = false
         CoreChat.loginByPassword(userName,password){
+            progressDialog?.dismiss()
+            view.isClickable = true
             if (it is User){
                 val intent = Intent(view.context,MainActivity::class.java)
                 view.context.startActivity(intent)
             }else if (it is Exception){
-                Snackbar.make(view,it.message as CharSequence,Snackbar.LENGTH_LONG)
+                Snackbar.make(view,it.message as CharSequence,Snackbar.LENGTH_LONG).show()
             }
         }
     }

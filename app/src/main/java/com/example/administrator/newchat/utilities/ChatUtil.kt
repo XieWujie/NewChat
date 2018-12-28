@@ -1,16 +1,19 @@
 package com.example.administrator.newchat.utilities
 
+import android.app.Dialog
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import com.avos.avoscloud.im.v2.AVIMConversation
 import com.avos.avoscloud.im.v2.AVIMException
 import com.avos.avoscloud.im.v2.callback.AVIMConversationMemberQueryCallback
 import com.avos.avoscloud.im.v2.conversation.AVIMConversationMemberInfo
 import com.example.administrator.newchat.CoreChat
+import com.example.administrator.newchat.R
 import com.example.administrator.newchat.custom.getKey
 import com.example.administrator.newchat.data.user.User
 
@@ -77,4 +80,11 @@ object ChatUtil{
         }
     }
 
+    fun createProgressDialog(context: Context):Dialog{
+        val dialog = Dialog(context,R.style.progressBar_dialog_style)
+        val progressBar = ProgressBar(context)
+        dialog.setContentView(progressBar)
+        dialog.setCancelable(false)
+        return dialog
+    }
 }

@@ -90,9 +90,6 @@ object CoreChat{
         }
     }
 
-    fun initContactByNet(contact_list_id:String){
-        contacts!!.cacheContactByNet()
-    }
 
     fun loginWithoutNet(user: User,loginCallback:()->Unit){
         owner = user

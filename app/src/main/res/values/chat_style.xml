@@ -20,6 +20,12 @@
         <!-- 是否使用背景半透明 -->
     </style>
 
+    <style name="progressBar_dialog_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/MyEditText</item>
         <item name="colorControlActivated">@color/MyEditText</item>

@@ -1,20 +1,17 @@
-package com.example.administrator.newchat.utilities
+package com.example.administrator.newchat.presenter
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.avos.avoscloud.AVObject
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.databinding.AddDialogLayoutBinding
+import com.example.administrator.newchat.utilities.*
 import com.example.administrator.newchat.view.ChatActivity
 
 class UserHomePresenter(val o:AVObject,val nav: NavController){
@@ -42,7 +39,7 @@ class UserHomePresenter(val o:AVObject,val nav: NavController){
             val context = view.context
             dialog = Dialog(context, R.style.DialogTheme)
             val binding = AddDialogLayoutBinding.inflate(LayoutInflater.from(context), null)
-            binding.helper = AddDialogHelper(o,nav,dialog!!)
+            binding.helper = AddDialogHelper(o, nav, dialog!!)
             val view = binding.root
             dialog?.setContentView(view)
             val window = dialog?.window

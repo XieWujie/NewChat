@@ -2,7 +2,6 @@ package com.example.administrator.newchat.view
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import com.avos.avoscloud.FindCallback
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.adapter.QueryAdapter
 import com.example.administrator.newchat.databinding.AddContactFragmentBinding
-import com.example.administrator.newchat.utilities.AddContactPresenter
+import com.example.administrator.newchat.presenter.AddContactPresenter
 
 
 class AddContactFragment :BaseFragment(){

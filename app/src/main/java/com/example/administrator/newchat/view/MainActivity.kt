@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,7 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.databinding.ActivityMainBinding
-import com.example.administrator.newchat.utilities.*
+import com.example.administrator.newchat.presenter.MainPresenter
 
 
 class MainActivity : AppCompatActivity() {
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUI(){
-        binding.mainviewhelper = MainViewHelper()
+        binding.mainviewhelper = MainPresenter()
         setSupportActionBar(binding.toolbar)
         binding.bottomNav.setupWithNavController(navController)
         binding.toolbar.setupWithNavController(navController, AppBarConfiguration(navController.graph))

@@ -13,7 +13,7 @@ import com.avos.sns.SNS
 import com.avos.sns.SNSType
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.databinding.LogInLayoutBinding
-import com.example.administrator.newchat.utilities.LogInHelper
+import com.example.administrator.newchat.presenter.LogInPresenter
 import com.example.administrator.newchat.utilities.ViewModelFactoryUtil
 import com.example.administrator.newchat.viewmodel.MainModel
 import java.lang.ref.WeakReference
@@ -36,11 +36,11 @@ class LoginFragment:Fragment(){
     fun init(){
         model.lastUser?.observe(this, Observer {
             if (it==null){
-                val logInHelper =  LogInHelper("","")
+                val logInHelper = LogInPresenter("", "")
                 logInHelper.setWeakActivity(WeakReference(activity!!))
                 binding.loginhelper = logInHelper
             }else{
-                binding.loginhelper = LogInHelper(it.name,it.password)
+                binding.loginhelper = LogInPresenter(it.name, it.password)
 //                CoreChat.loginWithoutNet(it){
 //                    toMainActivity()
 //                }

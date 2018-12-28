@@ -1,8 +1,9 @@
-package com.example.administrator.newchat.utilities
+package com.example.administrator.newchat.presenter
 
 import com.avos.avoscloud.AVObject
 import com.avos.avoscloud.AVQuery
 import com.avos.avoscloud.FindCallback
+import com.example.administrator.newchat.utilities.USER_NAME
 
 
 class AddContactPresenter{

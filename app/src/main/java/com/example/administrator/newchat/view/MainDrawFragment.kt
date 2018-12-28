@@ -5,20 +5,16 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.avos.avoscloud.AVFile
 import com.bumptech.glide.Glide
 import com.example.administrator.newchat.CoreChat
 import com.example.administrator.newchat.custom.BottomInput
@@ -26,7 +22,7 @@ import com.example.administrator.newchat.custom.BottomInput
 
 import com.example.administrator.newchat.databinding.FragmentMainDrawLayoutBinding
 import com.example.administrator.newchat.utilities.ChatUtil
-import com.example.administrator.newchat.utilities.MainDrawPresenter
+import com.example.administrator.newchat.presenter.MainDrawPresenter
 import com.google.android.material.snackbar.Snackbar
 
 class MainDrawFragment : Fragment() {

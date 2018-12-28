@@ -8,13 +8,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.administrator.newchat.R
 import com.example.administrator.newchat.databinding.RegisterLayoutBinding
-import com.example.administrator.newchat.utilities.RegisterHelper
+import com.example.administrator.newchat.presenter.RegisterPresenter
 
 class RegisterFragment:Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<RegisterLayoutBinding>(inflater, R.layout.register_layout,container,false)
-        val registerHelper = RegisterHelper()
+        val registerHelper = RegisterPresenter()
         binding.registerhelper = registerHelper
         return binding.root
     }

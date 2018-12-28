@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="presenter" type="com.example.administrator.newchat.utilities.UserHomePresenter"/>
+        <variable name="presenter" type="com.example.administrator.newchat.presenter.UserHomePresenter"/>
     </data>
     <RelativeLayout
             android:layout_width="match_parent"
