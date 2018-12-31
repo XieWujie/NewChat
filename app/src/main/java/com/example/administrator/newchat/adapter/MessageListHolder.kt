@@ -13,9 +13,16 @@ import com.example.administrator.newchat.view.ChatActivity
 
 class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding.root){
 
+    val owenrId = CoreChat.userId!!
+    val a = 8*3600000
+
     override fun bind(any: Any) {
         if (any is Message){
-            binding.message = any
+            if (any.fromId == owenrId){
+                binding.message =  any.copy(createAt = any.createAt-a)
+            }else{
+                binding.message = any
+            }
             val t = binding.contentText
             when(any.type){
                 IMAGE_MESSAGE ->t.text = "图片"
@@ -45,7 +52,7 @@ class MessageListHolder(val binding:MessageItemLayoutBinding):BaseHolder(binding
                 intent.putExtra(CONVERSATION__NAME,any.conversationName)
                 intent.putExtra(AVATAR,any.avatar)
                 val newMessage = any.copy(unReadCount = 0)
-                CoreChat.cacheMessage(newMessage,false)
+                CoreChat.cacheMessage(newMessage,true)
                 context.startActivity(intent)
             }
             binding.root.setOnLongClickListener {
